@@ -1,0 +1,94 @@
+.addButton {
+  margin-top: 20px;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.66;
+  letter-spacing: 0.03333em;
+  text-align: left;
+  margin-top: 3px;
+  margin-right: 14px;
+  margin-bottom: 0;
+  margin-left: 14px;
+}
+
+/* 
+.ql-toolbar.ql-snow+.ql-container.ql-snow {
+     border-color: #d32f2f;;
+    border-top: #d32f2f;;
+}
+
+.ql-toolbar.ql-snow+.ql-container.ql-snow {
+    border-top: #d32f2f;;
+}
+
+.ql-toolbar.ql-snow {
+    border: 1px solid #f00 !important;
+    box-sizing: border-box;
+    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    padding: 8px;
+} */
+
+.quill-editor-error {
+  border: 1px solid red;
+}
+
+.css-iegj0b-JoySwitch-input2 {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+  color: #d32f2f !important;
+}
+
+.error .MuiOutlinedInput-root {
+  border-color: red !important;
+}
+
+.borderLine {
+  border: 1px solid #d32f2f !important;
+}
+.textColor {
+  color: #d32f2f !important;
+}
+.searchBox {
+  display: flex;
+  align-self: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  padding-bottom: 55px;
+  padding-right: 30px;
+}
+
+.displayv {
+  display: flex;
+  float: inline-end;
+  margin-right: 30px;
+}
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 10px;
+  margin-bottom: 0px;
+  padding-top: 16px;
+}
+.icon-design {
+  margin-left: 4px;
+  margin-bottom: -5px;
+}
+
+p {
+  margin-top: 11px !important;
+  margin-bottom: 1rem !important;
+}
+
+.loginBtn {
+  width: 100%;
+  height: 50px;
+  font-size: 27px;
+}
