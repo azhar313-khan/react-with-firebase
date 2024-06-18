@@ -165,13 +165,12 @@ const Add = () => {
           </div>
           <div>
             <div
-            // className={formState.errors.description ? "quill-editor-error" : ""}
             >
               <ReactQuill
                 theme="snow"
                 value={formik?.values?.description}
                 onChange={(value) => {
-                  formik.setFieldValue("description", value); // Update formik field value
+                  formik.setFieldValue("description", value); 
                 }}
                 className={
                   formik.errors.description ? "quill-editor-error" : ""

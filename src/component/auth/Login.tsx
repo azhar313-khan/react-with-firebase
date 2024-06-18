@@ -38,10 +38,7 @@ export default function Login() {
       password: Yup.string().required("Password is required").min(6),
     }),
     onSubmit: async (values: AuthStore) => {
-      // dispatch(loginUser(values));
-      // if (isLoggedIn) navigate("/");
       const result = dispatch(loginUser(values));
-
       if (loginUser.fulfilled.match(result)) {
         navigate("/");
       }

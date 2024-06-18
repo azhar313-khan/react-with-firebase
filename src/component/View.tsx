@@ -56,7 +56,7 @@ const View = () => {
             <Typography color="text.secondary">Description:</Typography>
             {htmlText && (
               <Typography
-                component="div" // Specify the component to render
+                component="div"
                 color="text.secondary"
                 dangerouslySetInnerHTML={{ __html: htmlText }}
               />

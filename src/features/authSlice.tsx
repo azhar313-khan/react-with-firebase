@@ -18,12 +18,11 @@ const initialState: MyState = {
 };
 
 interface MyState {
-  // Define your state properties
   user: null;
   users: [];
   isLodding: boolean;
   isLoggedIn: boolean;
-  error: string | null; // Ensure error property can hold strings or null
+  error: string | null;
 }
 
 interface SignUpUserPayload {
@@ -47,16 +46,9 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("User", user);
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        // const uid = user.uid;
         return user;
-
-        // ...
       } else {
         return "auth";
-        // User is signed out
-        // ...
       }
     });
   } catch (error) {
@@ -65,10 +57,10 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
 });
 
 export const signUpUser = createAsyncThunk<
-  unknown, // Return type of the thunk
-  SignUpUserPayload, // First argument type of the payload creator
+  unknown,
+  SignUpUserPayload,
   {
-    rejectValue: RejectValue; // The type for rejectWithValue
+    rejectValue: RejectValue;
   }
 >("auth/signUpUser", async ({ email, password, name }, { rejectWithValue }) => {
   try {
@@ -89,7 +81,6 @@ export const signUpUser = createAsyncThunk<
     console.log(docRef, "docsSnap");
 
     return user;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     const errorMessage = error.message.split("/")[1].split("-").join(" ");
     return rejectWithValue(errorMessage);
@@ -98,7 +89,6 @@ export const signUpUser = createAsyncThunk<
 
 export const loginUser = createAsyncThunk(
   "user/loginUser",
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async (data: any, { rejectWithValue }) => {
     const { email, password }: LoginUserPayload = data;
     try {
@@ -128,7 +118,6 @@ export const loginUser = createAsyncThunk(
 
         return userData;
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMessage = error.message.split("/")[1].split("-").join(" ");
       enqueueSnackbar(errorMessage, {
@@ -140,53 +129,11 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
-// const checkCredentials = (user: User, credentials: cred) => {
-//   return (
-//     user.email === credentials.email && user.password === credentials.password
-//   );
-// };
 
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    // signup: (state, action) => {
-    //   state.isLoggedIn = false;
-    //   state.user = action.payload;
-    //   state.users.push(action.payload);
-    // },
-    // login: (state, action) => {
-    //   const storedUser = state.users.find(
-    //     (user) => user.email === action.payload.email
-    //   );
-
-    //   console.log(storedUser, "check user");
-    //   if (!storedUser) {
-    //     state.isLoggedIn = false;
-    //     enqueueSnackbar("User Not Found ", {
-    //       variant: "error",
-    //       anchorOrigin: { vertical: "top", horizontal: "center" },
-    //       autoHideDuration: 1000,
-    //     });
-    //     return;
-    //   }
-    //   const isMatch = checkCredentials(storedUser, action.payload);
-    //   if (isMatch) {
-    //     state.isLoggedIn = true;
-    //     state.user = storedUser;
-    //     enqueueSnackbar("Login Successfully ", {
-    //       variant: "success",
-    //       anchorOrigin: { vertical: "top", horizontal: "center" },
-    //       autoHideDuration: 1000,
-    //     });
-    //   } else {
-    //     enqueueSnackbar("Invalid Credentials", {
-    //       variant: "error",
-    //       anchorOrigin: { vertical: "top", horizontal: "center" },
-    //       autoHideDuration: 1000,
-    //     });
-    //   }
-    // },
     logout: (state) => {
       state.isLoggedIn = false;
       state.user = null;
@@ -216,7 +163,8 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.isLodding = true;
         state.isLoggedIn = false;
-        state.error = typeof action.payload === "string" ? action.payload : null;
+        state.error =
+          typeof action.payload === "string" ? action.payload : null;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.isLoggedIn = false;

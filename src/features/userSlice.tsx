@@ -105,18 +105,20 @@ export const updateById = createAsyncThunk(
     try {
       const { ...taskData } = data;
       let taskId = null;
-      console.log(typeof data.id, "dat");
       const getId = String(data.id);
+      console.log(getId, "task -getId");
       const q = query(
         collection(db, `users/${data?.userId}/tasks`),
         where("id", "==", getId)
       );
       console.log(q, "query");
       const querySnapshot = await getDocs(q);
+
       querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data());
+        console.log(doc.id, doc.data(), "docs-1");
         taskId = doc.id;
       });
+      console.log(taskId, "taskId");
       const docRef = doc(db, `users/${data?.userId}/tasks/${taskId}`);
       await updateDoc(docRef, taskData);
       return data;
@@ -154,34 +156,6 @@ export const changeStatusData = createAsyncThunk<RowStatus, RowStatus>(
     }
   }
 );
-
-// export const changeStatusData = createAsyncThunk(
-//   "task/changeStatus",
-//   async (data: RowStatus) => {
-//     try {
-//       const { itemId } = data;
-//       let taskId = null;
-//       const q = query(
-//         collection(db, `users/${data?.userId}/tasks`),
-//         where("id", "==", itemId)
-//       );
-//       const querySnapshot = await getDocs(q);
-//       querySnapshot.forEach((doc) => {
-//         taskId = doc.id;
-//       });
-
-//       data.newStatus = data.newStatus === "active" ? "inactive" : "active";
-//       const docRef = doc(db, `users/${data?.userId}/tasks/${taskId}`);
-//       await updateDoc(docRef, {
-//         status: data.newStatus,
-//       });
-//       return data;
-//     } catch (e) {
-//       console.error("Error updating document: ", e);
-//       throw e;
-//     }
-//   }
-// );
 
 export const fetchTasks = createAsyncThunk(
   "task/fetchTasks",
@@ -228,9 +202,6 @@ const userSlice = createSlice({
   name: "taskStore",
   initialState: initialState,
   reducers: {
-    // add: (state, action) => {
-    //   state.rows.push(action?.payload);
-    // },
     update: (state, action) => {
       state.rows = state.rows.map((list) => {
         if (list?.id === action?.payload?.id) {
@@ -263,12 +234,8 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder.addCase(addTask.pending, (state) => {
-    //   state.error = null;
-    // });
     builder.addCase(addTask.fulfilled, (action) => {
       console.log(action, "action");
-      // state.rows.push(action.payload);
     });
 
     builder.addCase(fetchTaskByid.fulfilled, (state) => {
@@ -297,7 +264,6 @@ const userSlice = createSlice({
     builder.addCase(fetchTasks.fulfilled, (state, action) => {
       state.rows = action.payload;
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     builder.addCase(fetchTasks.rejected, (state, action: any) => {
       state.rows = action.payload;
     });

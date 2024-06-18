@@ -44,7 +44,6 @@ import {
   clearAll,
   fetchTasks,
   removeTask,
-  // fetchTasks,
 } from "../features/userSlice";
 import { selectFilteredAndSearchedRows } from "../features/selectors";
 import { logout, logoutUser } from "../features/authSlice";
@@ -76,7 +75,7 @@ interface Column {
 }
 
 interface SortConfig {
-  key: SortableKeys | null; // Allow null to represent no sorting
+  key: SortableKeys | null;
   direction: "asc" | "desc";
 }
 
@@ -144,7 +143,6 @@ const List = () => {
   });
 
   const filteredRows = useSelector(selectFilteredAndSearchedRows);
-  // const dispatch = useDispatch();
   const dispatch = useDispatch<AppDispatch>();
 
   const rediect = useNavigate();
@@ -192,7 +190,7 @@ const List = () => {
     const { id } = row;
     if (id === undefined) {
       console.error("Task ID is undefined");
-      return; // Return early if `id` is undefined
+      return;
     }
     Swal.fire({
       title: "Are you sure?",
@@ -232,7 +230,7 @@ const List = () => {
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
         if (sortConfig.key === null) {
-          return 0; // If no sorting key is provided, maintain the current order
+          return 0;
         }
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === "asc" ? -1 : 1;
@@ -394,9 +392,6 @@ const List = () => {
                 <TextField
                   id="search-bar"
                   className="text"
-                  // onInput={(e) => {
-                  //   handleSearchChange(e);
-                  // }}
                   label="Search Name"
                   variant="outlined"
                   size="small"

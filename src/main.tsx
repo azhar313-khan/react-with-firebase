@@ -12,13 +12,11 @@ import { store } from "./store/store";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <PersistGate persistor={persistor}> */}
       <SnackbarProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
       </SnackbarProvider>
-      {/* </PersistGate> */}
     </Provider>
   </React.StrictMode>
 );
