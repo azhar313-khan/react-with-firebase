@@ -1,28 +1,36 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
-import List from "./component/List";
-import View from "./component/View";
-import Edit from "./component/Edit";
-import Add from "./component/Add";
-import Signup from "./component/auth/Signup";
-import Login from "./component/auth/Login";
-import AuthRouter from "./component/protectRoute/AuthRouter";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from "react";
+
+const List = lazy(() => import("./component/List"));
+const Signup = lazy(() => import("./component/auth/Signup"));
+const Login = lazy(() => import("./component/auth/Login"));
+const Add = lazy(() => import("./component/Add"));
+const Edit = lazy(() => import("./component/Edit"));
+const View = lazy(() => import("./component/View"));
+const AuthRouter = lazy(() => import("./component/protectRoute/AuthRouter"));
 
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<List />} />
-
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-
-        <Route element={<AuthRouter />}>
-          <Route path="/add" element={<Add />} />
-          <Route path="/edit/:id" element={<Edit />} />
-          <Route path="/view/:id" element={<View />} />
-        </Route>
-      </Routes>
+      <Suspense
+        fallback={
+          <div>
+            <h1 style={{ textAlign: "center" }}>Loading ....</h1>
+          </div>
+        }
+      >
+        <Routes>
+          <Route path="/" element={<List />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<AuthRouter />}>
+            <Route path="/add" element={<Add />} />
+            <Route path="/edit/:id" element={<Edit />} />
+            <Route path="/view/:id" element={<View />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </>
   );
 }

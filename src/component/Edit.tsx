@@ -18,30 +18,16 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { updateById } from "../features/userSlice";
 import { AppDispatch } from "../store/store";
+import { rowsState, RowTask } from "../interface";
+import { EditComponent, SnackbarMessages } from "../assets/constantText";
+import { statusTypesValue, taskValues } from "../constant";
 
-interface Row {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-  authId: string;
-  userId: string;
-}
-
-interface rowsState {
-  taskStore: {
-    rows: [];
-  };
-}
-
-// const Edit = ({ rows, setRows }) => {
 const Edit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const defaultValues: Row = {
+  const defaultValues: RowTask = {
     id: "",
     name: "",
     description: "",
@@ -69,11 +55,8 @@ const Edit = () => {
       status: Yup.string().required("Status is required"),
       description: Yup.string().required("Description is required"),
     }),
-    onSubmit: (values: Row) => {
-      console.log(values, "valid");
-      // dispatch(update(values));
+    onSubmit: (values: RowTask) => {
       if (id === undefined) {
-        // Handle the case when `id` is undefined
         console.error("ID is undefined");
         return;
       }
@@ -87,10 +70,13 @@ const Edit = () => {
         })
       );
 
-      enqueueSnackbar("Update successfully", {
+      enqueueSnackbar(SnackbarMessages.UPDATE_SUCCESS, {
         variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-        autoHideDuration: 1000,
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "center",
+        },
+        autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
       });
       navigate("/");
     },
@@ -98,24 +84,17 @@ const Edit = () => {
 
   useEffect(() => {
     if (id) {
-      const data = rows.find((row: Row) => String(row?.id) === id);
+      const data = rows.find((row: RowTask) => String(row?.id) === id);
       formik.setValues(data || defaultValues);
     }
   }, [id]);
 
-  const typeValue = [
-    { value: "Task", label: "Task" },
-    { value: "SubTask", label: "SubTask" },
-  ];
-
-  const statusType = [
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
-  ];
+  const typeValue = taskValues;
+  const statusType = statusTypesValue;
 
   return (
-    <div>
-      <h2 style={{ textAlign: "center" }}>{id ? "Update" : "Create"}</h2>
+    <div style={{ marginTop: "40px" }}>
+      <h2 style={{ textAlign: "center" }}>{EditComponent.UPDATE}</h2>
       <form
         onSubmit={formik.handleSubmit}
         style={{ margin: "auto", width: "60%" }}
@@ -136,7 +115,9 @@ const Edit = () => {
         </div>
         <div>
           <FormControl sx={{ mt: 1, width: 1100 }}>
-            <InputLabel id="demo-multiple-name-label">Type</InputLabel>
+            <InputLabel id="demo-multiple-name-label">
+              {EditComponent.TYPE}
+            </InputLabel>
             <Select
               labelId="demo-multiple-name-label"
               id="demo-multiple-name"
@@ -162,7 +143,9 @@ const Edit = () => {
         </div>
         <div>
           <FormControl sx={{ mt: 1, mb: 1, width: 1100 }}>
-            <InputLabel id="demo-multiple-name-label">Status</InputLabel>
+            <InputLabel id="demo-multiple-name-label">
+              {EditComponent.STATUS}
+            </InputLabel>
             <Select
               name="status"
               value={formik?.values?.status}
@@ -209,7 +192,7 @@ const Edit = () => {
             variant="contained"
             style={{ marginTop: "20px" }}
           >
-            {id ? "Update" : "Create"}
+            {EditComponent.UPDATE}
           </Button>
         </div>
       </form>

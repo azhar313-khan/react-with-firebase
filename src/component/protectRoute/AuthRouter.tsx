@@ -1,11 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-
-interface Navigation {
-  authStore: {
-    isLoggedIn: boolean;
-  };
-}
+import { Navigation } from "../../interface";
 
 export default function AuthRouter() {
   const isLoggedIn = useSelector(

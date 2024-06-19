@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { loginUserService, signUserService } from "../service/authService";
+import { MyState, RejectValue, SignUpUserPayload } from "../interface";
 
 const initialState: MyState = {
   isLoggedIn: false,
@@ -11,23 +12,7 @@ const initialState: MyState = {
   isLodding: false,
 };
 
-interface MyState {
-  user: null;
-  users: [];
-  isLodding: boolean;
-  isLoggedIn: boolean;
-  error: string | null;
-}
 
-interface SignUpUserPayload {
-  email: string;
-  password: string;
-  name: string;
-}
-
-interface RejectValue {
-  message: string;
-}
 
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   try {

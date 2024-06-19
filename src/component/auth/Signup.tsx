@@ -7,11 +7,11 @@ import { signUpUser } from "../../features/authSlice";
 import { useDispatch } from "react-redux";
 import "../Add.css";
 import { AppDispatch } from "../../store/store";
+import { SignupComponent, SnackbarMessages } from "../../assets/constantText";
 
 export default function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
   const goToLogin = () => {
     navigate("/login");
   };
@@ -37,10 +37,10 @@ export default function Signup() {
       const result = await dispatch(signUpUser(values));
 
       if (signUpUser.fulfilled.match(result) && result?.payload !== undefined) {
-        enqueueSnackbar("Signup successful", {
+        enqueueSnackbar(SnackbarMessages.SIGNUP_SUCCESS, {
           variant: "success",
           anchorOrigin: { vertical: "top", horizontal: "center" },
-          autoHideDuration: 1000,
+          autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
         });
         navigate("/login");
       } else {
@@ -48,7 +48,7 @@ export default function Signup() {
           enqueueSnackbar(result.payload as SnackbarMessage, {
             variant: "success",
             anchorOrigin: { vertical: "top", horizontal: "center" },
-            autoHideDuration: 1000,
+            autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
           });
         }
       }
@@ -57,7 +57,7 @@ export default function Signup() {
 
   return (
     <div style={{ marginTop: "50px" }}>
-      <h2 style={{ textAlign: "center" }}>Signup Page</h2>
+      <h2 style={{ textAlign: "center" }}>{SignupComponent.SIGNUP_PAGE} </h2>
       <form
         onSubmit={formik.handleSubmit}
         style={{ margin: "auto", width: "40%" }}
@@ -141,11 +141,11 @@ export default function Signup() {
             style={{ marginTop: "20px" }}
             className="loginBtn"
           >
-            Signup
+            {SignupComponent.Sign_Up}
           </Button>
         </div>
         <div className="d-flex align-items-center justify-content-center pb-4">
-          <p className="mb-0 me-2">Do have an account?</p>
+          <p className="mb-0 me-2"> {SignupComponent.DO_NOT}</p>
           <button
             type="button"
             style={{ margin: "10px", marginTop: "12px" }}
@@ -154,7 +154,7 @@ export default function Signup() {
             className="btn btn-outline-primary"
             onClick={goToLogin}
           >
-            Login
+            {SignupComponent.Login}
           </button>
         </div>
       </form>

@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: "AIzaSyDxrqfQ6LOYDq0AxD8iYG9sKxDGL5FI9o4",
-  authDomain: "my-react-app-ca92e.firebaseapp.com",
-  projectId: "my-react-app-ca92e",
-  storageBucket: "my-react-app-ca92e.appspot.com",
-  messagingSenderId: "258235587630",
-  appId: "1:258235587630:web:2c39eb43e0fde5fd6513bf",
-  databaseURL: "https://my-react-app-ca92e-default-rtdb.firebaseio.com",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECTID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  databaseURL: import.meta.env.VITE_DATABASE_URL,
 };
 
 export const app = initializeApp(firebaseConfig);

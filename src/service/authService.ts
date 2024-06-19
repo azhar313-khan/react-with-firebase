@@ -5,19 +5,11 @@ import {
 } from "firebase/auth";
 import { auth, db } from "../firebase/firebase";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar } from 'notistack';
+import { LoginUserPayload, SignUpUserPayload } from "../interface";
+import { SnackbarMessages } from "../assets/constantText";
 
-interface SignUpUserPayload {
-  email: string;
-  password: string;
-  name: string;
-}
 
-interface LoginUserPayload {
-  id: string;
-  email: string;
-  password: string;
-}
 
 
 export const signUserService = async({ email, password, name }:SignUpUserPayload) => {
@@ -36,7 +28,6 @@ export const signUserService = async({ email, password, name }:SignUpUserPayload
       authId: user.uid,
     });
 
-    console.log(docRef, "docsSnap");
 
     return user;
   } catch (error: any) {
@@ -60,15 +51,14 @@ export const loginUserService = async({email,password}:LoginUserPayload) => {
         const querySnapshot = await getDocs(q);
         let userData = null;
         querySnapshot.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
           userData = doc.data();
           userData.userId = doc.id;
         });
 
-        enqueueSnackbar("Login Successfully", {
+        enqueueSnackbar(SnackbarMessages.LOGIN_SUCCESS, {
           variant: "success",
           anchorOrigin: { vertical: "top", horizontal: "center" },
-          autoHideDuration: 1000,
+          autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
         });
 
         return userData;

@@ -11,31 +11,16 @@ import {
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar, SnackbarMessage } from "notistack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask } from "../features/userSlice";
 import { AppDispatch } from "../store/store";
-
-interface Row {
-  authId: string;
-  id: string | number;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-  userId: string;
-}
-
-interface loginState {
-  authStore: {
-    user: {
-      authId: string;
-    };
-  };
-}
+import { loginState, RowTask } from "../interface";
+import { statusTypesValue, taskValues } from "../constant";
+import { AddComponent, SnackbarMessages } from "../assets/constantText";
 
 const Add = () => {
   const myRef = useRef(null);
@@ -45,7 +30,6 @@ const Add = () => {
     (state: loginState) => state?.authStore?.user?.authId
   );
 
-  const { id } = useParams();
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -64,33 +48,26 @@ const Add = () => {
       status: Yup.string().required("Status is required"),
       description: Yup.string().required("Description is required"),
     }),
-    onSubmit: (values: Row) => {
+    onSubmit: (values: RowTask) => {
       values.authId = loginUser;
-      values.id = Math.floor(new Date().valueOf() * Math.random());
+      values.id = String(Math.floor(new Date().valueOf() * Math.random()));
       dispatch(addTask(values));
-      enqueueSnackbar("Create successfully", {
+      enqueueSnackbar(SnackbarMessages.CREATE_SUCCESS, {
         variant: "success",
         anchorOrigin: { vertical: "top", horizontal: "center" },
-        autoHideDuration: 1000,
+        autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
       });
       navigate("/");
     },
   });
 
-  const typeValue = [
-    { value: "Task", label: "Task" },
-    { value: "SubTask", label: "SubTask" },
-  ];
-
-  const statusType = [
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
-  ];
+  const typeValue = taskValues;
+  const statusType = statusTypesValue;
 
   return (
     <>
-      <div ref={myRef}>
-        <h2 style={{ textAlign: "center" }}>{id ? "Update" : "Create"}</h2>
+      <div ref={myRef} style={{ marginTop: "40px" }}>
+        <h2 style={{ textAlign: "center" }}>{AddComponent.CREATE}</h2>
         <form
           onSubmit={formik.handleSubmit}
           style={{ margin: "auto", width: "60%" }}
@@ -111,7 +88,9 @@ const Add = () => {
           </div>
           <div>
             <FormControl sx={{ mt: 1, width: 1100 }}>
-              <InputLabel id="demo-multiple-name-label">Type</InputLabel>
+              <InputLabel id="demo-multiple-name-label">
+                {AddComponent.TYPE}
+              </InputLabel>
               <Select
                 labelId="demo-multiple-name-label"
                 id="demo-multiple-name"
@@ -137,7 +116,9 @@ const Add = () => {
           </div>
           <div>
             <FormControl sx={{ mt: 1, mb: 1, width: 1100 }}>
-              <InputLabel id="demo-multiple-name-label">Status</InputLabel>
+              <InputLabel id="demo-multiple-name-label">
+                {AddComponent.STATUS}
+              </InputLabel>
               <Select
                 name="status"
                 value={formik.values.status}
@@ -164,13 +145,12 @@ const Add = () => {
             </FormControl>
           </div>
           <div>
-            <div
-            >
+            <div>
               <ReactQuill
                 theme="snow"
                 value={formik?.values?.description}
                 onChange={(value) => {
-                  formik.setFieldValue("description", value); 
+                  formik.setFieldValue("description", value);
                 }}
                 className={
                   formik.errors.description ? "quill-editor-error" : ""
@@ -189,7 +169,7 @@ const Add = () => {
               variant="contained"
               style={{ marginTop: "20px" }}
             >
-              {id ? "Update" : "Create"}
+              {AddComponent.CREATE}
             </Button>
           </div>
         </form>

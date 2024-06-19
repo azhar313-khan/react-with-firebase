@@ -11,38 +11,17 @@ import {
   fatchTaskByIdService,
   taskDeleteByIdService,
 } from "../service/taskService";
-
-interface Row {
-  authId: string;
-  id: string | number;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-  userId: string;
-}
-
-interface RowStatus {
-  itemId: number | string | undefined;
-  newStatus: string;
-  userId: string;
-}
-
-interface State {
-  rows: Row[];
-  searchQuery: string;
-  filterStatus: string;
-}
-
-interface removeTaskValue {
-  id: string | number;
-  userId: string;
-}
+import { removeTaskValue, Row, RowStatus, State } from "../interface";
 
 const initialState: State = {
   rows: [],
   searchQuery: "",
   filterStatus: "all",
+  taskStore: {
+    rows: [],
+    searchQuery: "",
+    filterStatus: "",
+  },
 };
 
 export const addTask = createAsyncThunk("task/addTask", async (data: Row) => {
@@ -81,19 +60,18 @@ export const changeStatusData = createAsyncThunk<RowStatus, RowStatus>(
     return result;
   }
 );
+export const removeTask = createAsyncThunk(
+  "task/removeTask",
+  async (data: removeTaskValue) => {
+    const result = await removeTaskByIdService(data);
+    return result;
+  }
+);
 
 export const fetchTasks = createAsyncThunk(
   "task/fetchTasks",
   async (userId: string) => {
     const result = await fetchTasksService(userId);
-    return result;
-  }
-);
-
-export const removeTask = createAsyncThunk(
-  "task/removeTask",
-  async (data: removeTaskValue) => {
-    const result = await removeTaskByIdService(data);
     return result;
   }
 );

@@ -1,30 +1,12 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-
-interface Row {
-  authId: string;
-  id: string | number;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-  userId: string;
-}
-
-interface RowStatus {
-  itemId: number | string | undefined;
-  newStatus: string;
-  userId: string;
-}
-
-interface removeTaskValue {
-  id: string | number;
-  userId: string;
-}
+import { removeTaskValue, RowStatus, RowTask } from "../interface";
 
 
 
-export const addTaskService  = async(data:Row) => {
+
+
+export const addTaskService  = async(data:RowTask) => {
     try {
       const querySnapshot = await getDocs(collection(db, "users"));
       for (const doc of querySnapshot.docs) {
@@ -67,7 +49,7 @@ export const taskDeleteByIdService = async(id:string) => {
     }
 }
 
-export const updateTaskByIdService = async(data:Row) => {
+export const updateTaskByIdService = async(data:RowTask) => {
      try {
       const { ...taskData } = data;
       let taskId = null;
@@ -79,10 +61,8 @@ export const updateTaskByIdService = async(data:Row) => {
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data(), "docs-1");
         taskId = doc.id;
       });
-      console.log(taskId,'taskId')
       const docRef = doc(db, `users/${data?.userId}/tasks/${taskId}`);
       await updateDoc(docRef, taskData);
       return data;
@@ -144,7 +124,6 @@ export const removeTaskByIdService = async(data:removeTaskValue) => {
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data());
         taskId = doc.id;
       });
 

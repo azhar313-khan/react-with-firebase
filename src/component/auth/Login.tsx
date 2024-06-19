@@ -7,18 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import "../Add.css";
 import { useEffect } from "react";
 import type { AppDispatch } from "../../store/store";
-
-interface isloginInterface {
-  authStore: {
-    isLoggedIn: boolean;
-  };
-}
-
-interface AuthStore {
-  id: string;
-  email: string;
-  password: string;
-}
+import { AuthStore, isloginInterface } from "../../interface";
+import { LoginComponent } from "../../assets/constantText";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -55,7 +45,7 @@ export default function Login() {
 
   return (
     <div style={{ marginTop: "50px" }}>
-      <h2 style={{ textAlign: "center" }}>Login Page</h2>
+      <h2 style={{ textAlign: "center" }}>{LoginComponent.LOGIN_PAGE}</h2>
       <form
         onSubmit={formik.handleSubmit}
         style={{ margin: "auto", width: "40%" }}
@@ -99,11 +89,11 @@ export default function Login() {
             style={{ marginTop: "20px", marginBottom: "20px" }}
             className="loginBtn"
           >
-            Login
+            {LoginComponent.Login}
           </Button>
         </div>
         <div className="d-flex align-items-center justify-content-center pb-4">
-          <p className="mb-0 me-2">Don't have an account?</p>
+          <p className="mb-0 me-2">{LoginComponent.DO_NOT}</p>
           <button
             type="button"
             data-mdb-button-init
@@ -111,7 +101,7 @@ export default function Login() {
             className="btn btn-outline-primary"
             onClick={goToSignup}
           >
-            SignUp
+            {LoginComponent.Sign_Up}
           </button>
         </div>
       </form>

@@ -1,22 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-interface Row {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-}
-
-interface State {
-  taskStore: {
-    rows: Row[];
-    searchQuery: string;
-    filterStatus: string;
-  };
-}
-
-
-
+import { State } from "../interface"
 
 const selectRows = (state: State) => state.taskStore.rows;
 const selectSearchQuery = (state: State) => state.taskStore.searchQuery;

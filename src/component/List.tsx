@@ -26,7 +26,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import Switch from "@mui/joy/Switch";
 import "./Add.css";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "notistack";
+import { useSnackbar, SnackbarMessage } from "notistack";
 import { useEffect, useMemo, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -47,30 +47,22 @@ import {
 } from "../features/userSlice";
 import { selectFilteredAndSearchedRows } from "../features/selectors";
 import { logout, logoutUser } from "../features/authSlice";
+import { authStorPayload, Data, ListRow } from "../interface";
+import { ListComponent, SnackbarMessages } from "../assets/constantText";
 
 interface Column {
-  id: keyof Row;
+  id: keyof ListRow;
   label: string;
   minWidth?: number;
   align?: "right";
   format?: (value: number) => string;
 }
 
-interface Row {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-  action: string;
-}
-
 type SortableKeys = "id" | "name" | "description" | "type" | "status";
-
 type ColumnId = keyof Data;
 
 interface Column {
-  id: keyof Row;
+  id: keyof ListRow;
   label: string;
 }
 
@@ -102,24 +94,6 @@ const columns: readonly Column[] = [
   },
 ];
 
-interface Data {
-  id?: string;
-  name: string;
-  description: string;
-  type: string;
-  status: string;
-}
-
-interface authStorPayload {
-  authStore: {
-    isLoggedIn: boolean;
-    user: {
-      userId: string;
-      name: string;
-    };
-  };
-}
-
 const List = () => {
   const isLoggedIn = useSelector(
     (state: authStorPayload) => state?.authStore?.isLoggedIn
@@ -143,7 +117,7 @@ const List = () => {
   });
 
   const filteredRows = useSelector(selectFilteredAndSearchedRows);
-    const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const rediect = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -165,16 +139,15 @@ const List = () => {
     itemId: number | string | undefined,
     newStatus: string
   ) => {
-    // dispatch(changeStatusData({ itemId: itemId, newStatus, userId }));
     dispatch(changeStatusData({ itemId, newStatus, userId }));
 
-    enqueueSnackbar("Status Change successfully", {
+    enqueueSnackbar(SnackbarMessages.Status_Change_success, {
       variant: "success",
       anchorOrigin: {
         vertical: "top",
         horizontal: "center",
       },
-      autoHideDuration: 1000,
+      autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
     });
   };
 
@@ -201,13 +174,13 @@ const List = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch(removeTask({ id, userId }));
-        enqueueSnackbar("delete successfully", {
+        enqueueSnackbar(SnackbarMessages.DELETE_SUCCESS, {
           variant: "success",
           anchorOrigin: {
             vertical: "top",
             horizontal: "center",
           },
-          autoHideDuration: 1000,
+          autoHideDuration: SnackbarMessages.AUTO_HIDE_DURATION,
         });
       }
     });
@@ -226,7 +199,7 @@ const List = () => {
   };
 
   const sortedItems = useMemo(() => {
-        const sortableItems = [...filteredRows];
+    const sortableItems = [...filteredRows];
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
         if (sortConfig.key === null) {
@@ -296,7 +269,7 @@ const List = () => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              myLogo
+              {ListComponent.myLogo}
             </Typography>
 
             {isLoggedIn && (
@@ -327,7 +300,9 @@ const List = () => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleClose}>Logout</MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    {ListComponent.logout}
+                  </MenuItem>
                 </Menu>
               </div>
             ) ? (
@@ -360,13 +335,16 @@ const List = () => {
                   open={Boolean(anchorEl)}
                   sx={{ mt: "45px" }}
                 >
-                  <MenuItem onClick={handleClose}>Logout</MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    {" "}
+                    {ListComponent.logout}
+                  </MenuItem>
                 </Menu>
               </div>
             ) : (
               <div>
                 <Button color="inherit" onClick={goToLoginPage}>
-                  Login
+                  {ListComponent.login}
                 </Button>
               </div>
             )}
@@ -384,7 +362,7 @@ const List = () => {
             onClick={() => goTOAddPage()}
             style={{ marginRight: "30px", float: "right" }}
           >
-            Add Data
+            {ListComponent.addTask}
           </Button>
           <div className="displayv">
             <div className="searchBox">
@@ -414,9 +392,11 @@ const List = () => {
                     displayEmpty
                     style={{ padding: "0px", margin: "-10px" }}
                   >
-                    <MenuItem value={"all"}>All</MenuItem>
-                    <MenuItem value={"active"}>Active</MenuItem>
-                    <MenuItem value={"inactive"}>Inactive</MenuItem>
+                    <MenuItem value={"all"}>{ListComponent.all}</MenuItem>
+                    <MenuItem value={"active"}>{ListComponent.active}</MenuItem>
+                    <MenuItem value={"inactive"}>
+                      {ListComponent.inactive}
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </div>
@@ -553,7 +533,9 @@ const List = () => {
                         src={"../../public/image/7466140.png"}
                         alt=""
                       />
-                      <h2 style={{ minHeight: "100px" }}>No Data Found</h2>
+                      <h2 style={{ minHeight: "100px" }}>
+                        {ListComponent.No_Data_Found}
+                      </h2>
                     </TableCell>
                   </TableRow>
                 )}

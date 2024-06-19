@@ -5,19 +5,12 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row } from "../interface";
 import { fetchTaskByid } from "../features/userSlice";
 import { useEffect } from "react";
 import { AppDispatch } from "../store/store";
 import { Box } from "@mui/material";
-
-interface rowData {
-  taskStore: {
-    rows: Row[];
-    searchQuery: string;
-    filterStatus: string;
-  };
-}
+import { rowData } from "../interface";
+import { ViewComponent } from "../assets/constantText";
 
 const View = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,15 +35,15 @@ const View = () => {
   }, [dispatch, id]);
   return (
     <>
-      <h1 style={{ textAlign: "center" }}>View Page</h1>
+      <h1 style={{ textAlign: "center" }}>{ViewComponent.view_page}</h1>
       <Card style={{ margin: "auto", width: "60%" }}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Name: <b>{task?.name}</b>
+            {ViewComponent.Name}: <b>{task?.name}</b>
           </Typography>
 
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Type:<b>{task?.type} </b>
+            {ViewComponent.Type}:<b>{task?.type} </b>
           </Typography>
           <Box sx={{ mb: 1.5 }}>
             <Typography color="text.secondary">Description:</Typography>
@@ -65,7 +58,7 @@ const View = () => {
         </CardContent>
         <CardActions>
           <Button size="small" onClick={goBack}>
-            Back
+            {ViewComponent.Back}
           </Button>
         </CardActions>
       </Card>
