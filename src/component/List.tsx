@@ -143,7 +143,7 @@ const List = () => {
   });
 
   const filteredRows = useSelector(selectFilteredAndSearchedRows);
-  const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
 
   const rediect = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -226,7 +226,7 @@ const List = () => {
   };
 
   const sortedItems = useMemo(() => {
-    const sortableItems = [...filteredRows];
+        const sortableItems = [...filteredRows];
     if (sortConfig.key) {
       sortableItems.sort((a, b) => {
         if (sortConfig.key === null) {

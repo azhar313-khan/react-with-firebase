@@ -1,13 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { enqueueSnackbar } from "notistack";
-import { auth, db } from "../firebase/firebase";
-import { collection, addDoc, where, query, getDocs } from "firebase/firestore";
-
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { auth } from "../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { loginUserService, signUserService } from "../service/authService";
 
 const initialState: MyState = {
   isLoggedIn: false,
@@ -29,12 +23,6 @@ interface SignUpUserPayload {
   email: string;
   password: string;
   name: string;
-}
-
-interface LoginUserPayload {
-  id: string;
-  email: string;
-  password: string;
 }
 
 interface RejectValue {
@@ -62,71 +50,16 @@ export const signUpUser = createAsyncThunk<
   {
     rejectValue: RejectValue;
   }
->("auth/signUpUser", async ({ email, password, name }, { rejectWithValue }) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-
-    const docRef = await addDoc(collection(db, "users"), {
-      email: email,
-      password: password,
-      name: name,
-      authId: user.uid,
-    });
-
-    console.log(docRef, "docsSnap");
-
-    return user;
-  } catch (error: any) {
-    const errorMessage = error.message.split("/")[1].split("-").join(" ");
-    return rejectWithValue(errorMessage);
-  }
+>("auth/signUpUser", async ({ email, password, name }) => {
+  const result = await signUserService({ email, password, name });
+  return result;
 });
 
 export const loginUser = createAsyncThunk(
   "user/loginUser",
-  async (data: any, { rejectWithValue }) => {
-    const { email, password }: LoginUserPayload = data;
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      if (userCredential) {
-        const q = query(
-          collection(db, "users"),
-          where("email", "==", userCredential.user.email)
-        );
-        const querySnapshot = await getDocs(q);
-        let userData = null;
-        querySnapshot.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
-          userData = doc.data();
-          userData.userId = doc.id;
-        });
-
-        enqueueSnackbar("Login Successfully", {
-          variant: "success",
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-          autoHideDuration: 1000,
-        });
-
-        return userData;
-      }
-    } catch (error: any) {
-      const errorMessage = error.message.split("/")[1].split("-").join(" ");
-      enqueueSnackbar(errorMessage, {
-        variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-        autoHideDuration: 1000,
-      });
-      return rejectWithValue(errorMessage);
-    }
+  async (data: any) => {
+    const result = await loginUserService(data);
+    return result;
   }
 );
 

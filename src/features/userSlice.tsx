@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { db } from "../firebase/firebase";
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+  changeTaskStatus,
+  fetchTasksService,
+  removeTaskByIdService,
+  updateTaskByIdService,
+} from "../service/taskService";
+
+import {
+  addTaskService,
+  fatchTaskByIdService,
+  taskDeleteByIdService,
+} from "../service/taskService";
 
 interface Row {
   authId: string;
@@ -46,155 +45,56 @@ const initialState: State = {
   filterStatus: "all",
 };
 
-export const addTask = createAsyncThunk(
-  "task/addTask",
-  async (data: Row, { rejectWithValue }) => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      for (const doc of querySnapshot.docs) {
-        if (doc.data().authId === data.authId) {
-          data.userId = doc.id;
-          const docRef = await addDoc(
-            collection(db, `users/${doc.id}/tasks`),
-            data
-          );
-
-          return { ...data, id: docRef?.id };
-        }
-      }
-      throw new Error("User not found");
-    } catch (e: any) {
-      console.error("Error adding document: ", e);
-      return rejectWithValue(e.message);
-    }
-  }
-);
+export const addTask = createAsyncThunk("task/addTask", async (data: Row) => {
+  const result = await addTaskService(data);
+  return result;
+});
 
 export const fetchTaskByid = createAsyncThunk(
   "task/taskByid",
   async (id: string) => {
-    try {
-      const docRef = doc(db, "task", id);
-      const docSnap = await getDoc(docRef);
-      return { id: docSnap.id, ...docSnap.data() };
-    } catch (e) {
-      console.error("Error fetching document: ", e);
-      throw e;
-    }
+    const result = await fatchTaskByIdService(id);
+    return result;
   }
 );
 
 export const taskDeleteById = createAsyncThunk(
   "task/taskDeleteById",
   async (id: string) => {
-    try {
-      const docRef = doc(db, "task", id);
-      await deleteDoc(docRef);
-      return id; // Return the ID of the deleted document
-    } catch (e) {
-      console.error("Error deleting document: ", e);
-      throw e;
-    }
+    const result = await taskDeleteByIdService(id);
+    return result;
   }
 );
 
 export const updateById = createAsyncThunk(
   "task/updateById",
   async (data: Row) => {
-    console.log(data, "data");
-    try {
-      const { ...taskData } = data;
-      let taskId = null;
-      const getId = String(data.id);
-      console.log(getId, "task -getId");
-      const q = query(
-        collection(db, `users/${data?.userId}/tasks`),
-        where("id", "==", getId)
-      );
-      console.log(q, "query");
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data(), "docs-1");
-        taskId = doc.id;
-      });
-      console.log(taskId, "taskId");
-      const docRef = doc(db, `users/${data?.userId}/tasks/${taskId}`);
-      await updateDoc(docRef, taskData);
-      return data;
-    } catch (e) {
-      console.error("Error updating document: ", e);
-      throw e;
-    }
+    const result = await updateTaskByIdService(data);
+    return result;
   }
 );
 
 export const changeStatusData = createAsyncThunk<RowStatus, RowStatus>(
   "task/changeStatus",
   async (data: RowStatus) => {
-    try {
-      const { itemId, userId } = data;
-      let taskId = null;
-      const q = query(
-        collection(db, `users/${userId}/tasks`),
-        where("id", "==", itemId)
-      );
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        taskId = doc.id;
-      });
-
-      data.newStatus = data.newStatus === "active" ? "inactive" : "active";
-      const docRef = doc(db, `users/${userId}/tasks/${taskId}`);
-      await updateDoc(docRef, {
-        status: data.newStatus,
-      });
-      return data;
-    } catch (e) {
-      console.error("Error updating document: ", e);
-      throw e;
-    }
+    const result = await changeTaskStatus(data);
+    return result;
   }
 );
 
 export const fetchTasks = createAsyncThunk(
   "task/fetchTasks",
-  async (userId: string, { rejectWithValue }) => {
-    try {
-      const taskRef = collection(db, `users/${userId}/tasks`);
-      const querySnapshot = await getDocs(taskRef);
-      const tasks: any = [];
-      querySnapshot.forEach((doc) => {
-        tasks.push({ ...doc.data() });
-      });
-      return tasks;
-    } catch (error: any) {
-      console.error("Error fetching tasks: ", error);
-      return rejectWithValue(error?.message);
-    }
+  async (userId: string) => {
+    const result = await fetchTasksService(userId);
+    return result;
   }
 );
 
 export const removeTask = createAsyncThunk(
   "task/removeTask",
-  async (data: removeTaskValue, { rejectWithValue }) => {
-    try {
-      let taskId = null;
-      const q = query(
-        collection(db, `users/${data?.userId}/tasks`),
-        where("id", "==", data?.id)
-      );
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, doc.data());
-        taskId = doc.id;
-      });
-
-      await deleteDoc(doc(db, `users/${data.userId}/tasks/${taskId}`));
-      return data?.id;
-    } catch (error: any) {
-      return rejectWithValue(error?.message);
-    }
+  async (data: removeTaskValue) => {
+    const result = await removeTaskByIdService(data);
+    return result;
   }
 );
 
@@ -202,25 +102,6 @@ const userSlice = createSlice({
   name: "taskStore",
   initialState: initialState,
   reducers: {
-    update: (state, action) => {
-      state.rows = state.rows.map((list) => {
-        if (list?.id === action?.payload?.id) {
-          list = action?.payload;
-        }
-        return list;
-      });
-    },
-    remove: (state, action) => {
-      state.rows = state.rows.filter((list) => list.id !== action.payload);
-    },
-    changeStatus: (state, action) => {
-      const { itemId } = action.payload;
-      let { newStatus } = action.payload;
-      newStatus = newStatus === "active" ? "inactive" : "active";
-      state.rows = state.rows.map((item) =>
-        item.id === itemId ? { ...item, status: newStatus } : item
-      );
-    },
     search: (state, action) => {
       state.searchQuery = action.payload;
     },
@@ -273,13 +154,5 @@ const userSlice = createSlice({
   },
 });
 
-export const {
-  // add,
-  update,
-  remove,
-  changeStatus,
-  search,
-  filterStatus,
-  clearAll,
-} = userSlice.actions;
+export const { search, filterStatus, clearAll } = userSlice.actions;
 export default userSlice.reducer;

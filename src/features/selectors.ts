@@ -22,9 +22,11 @@ const selectRows = (state: State) => state.taskStore.rows;
 const selectSearchQuery = (state: State) => state.taskStore.searchQuery;
 const selectFilterStatus = (state:State) => state.taskStore.filterStatus;
 
+
+
 export const selectFilteredAndSearchedRows = createSelector(
   [selectRows, selectSearchQuery, selectFilterStatus],
-  (rows, searchQuery, filterStatus) => {
+  (rows = [], searchQuery = '', filterStatus = 'all') => {
     const lowercaseSearchValue = searchQuery.toLowerCase();
     return rows.filter(item => {
       const matchesSearchQuery =
