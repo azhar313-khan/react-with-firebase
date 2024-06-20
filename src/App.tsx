@@ -2,10 +2,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { Routes as Url } from "./assets/urls";
-import CircularProgress, {
-  circularProgressClasses,
-} from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
+import Lodding from "./component/Lodding";
 
 const List = lazy(() => import("./component/List"));
 const Signup = lazy(() => import("./component/auth/Signup"));
@@ -18,23 +15,7 @@ const AuthRouter = lazy(() => import("./component/protectRoute/AuthRouter"));
 function App() {
   return (
     <>
-      <Suspense
-        fallback={
-          <div>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100vh",
-                textAlign: "center",
-              }}
-            >
-              <CircularProgress variant="indeterminate" size={100} />
-            </Box>
-          </div>
-        }
-      >
+      <Suspense fallback={<Lodding />}>
         <Routes>
           <Route path={Url.HOME} element={<List />} />
           <Route path={Url.SIGNUP} element={<Signup />} />
