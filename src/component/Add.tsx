@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useNavigate, useParams } from "react-router-dom";
-import { enqueueSnackbar, SnackbarMessage } from "notistack";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRef } from "react";

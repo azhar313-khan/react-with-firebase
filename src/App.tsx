@@ -1,6 +1,11 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import { Routes as Url } from "./assets/urls";
+import CircularProgress, {
+  circularProgressClasses,
+} from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 const List = lazy(() => import("./component/List"));
 const Signup = lazy(() => import("./component/auth/Signup"));
@@ -16,18 +21,28 @@ function App() {
       <Suspense
         fallback={
           <div>
-            <h1 style={{ textAlign: "center" }}>Loading ....</h1>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+                textAlign: "center",
+              }}
+            >
+              <CircularProgress variant="indeterminate" size={100} />
+            </Box>
           </div>
         }
       >
         <Routes>
-          <Route path="/" element={<List />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+          <Route path={Url.HOME} element={<List />} />
+          <Route path={Url.SIGNUP} element={<Signup />} />
+          <Route path={Url.LOGIN} element={<Login />} />
           <Route element={<AuthRouter />}>
-            <Route path="/add" element={<Add />} />
-            <Route path="/edit/:id" element={<Edit />} />
-            <Route path="/view/:id" element={<View />} />
+            <Route path={Url.ADD} element={<Add />} />
+            <Route path={Url.EDIT} element={<Edit />} />
+            <Route path={Url.VIEW} element={<View />} />
           </Route>
         </Routes>
       </Suspense>

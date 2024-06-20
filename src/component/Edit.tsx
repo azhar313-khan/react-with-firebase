@@ -56,8 +56,8 @@ const Edit = () => {
       description: Yup.string().required("Description is required"),
     }),
     onSubmit: (values: RowTask) => {
-      if (id === undefined) {
-        console.error("ID is undefined");
+      if (!id) {
+        console.error("ID is falsy");
         return;
       }
 
@@ -175,7 +175,7 @@ const Edit = () => {
               theme="snow"
               value={formik?.values?.description}
               onChange={(value) => {
-                formik.setFieldValue("description", value); // Update formik field value
+                formik.setFieldValue("description", value);
               }}
               className={
                 formik?.errors?.description ? "quill-editor-error" : ""

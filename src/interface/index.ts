@@ -1,4 +1,4 @@
- export interface MyState {
+export interface MyState {
   user: null;
   users: [];
   isLodding: boolean;
@@ -16,7 +16,6 @@ export interface RejectValue {
   message: string;
 }
 
-
 export interface Row {
   id: string;
   name: string;
@@ -32,7 +31,6 @@ export interface State {
     filterStatus: string;
   };
 }
-
 
 export interface Row {
   authId: string;
@@ -61,7 +59,6 @@ export interface removeTaskValue {
   userId: string;
 }
 
-
 export interface SignUpUserPayload {
   email: string;
   password: string;
@@ -74,7 +71,6 @@ export interface LoginUserPayload {
   password: string;
 }
 
-
 export interface RowTask {
   authId: string;
   id: string;
@@ -84,7 +80,6 @@ export interface RowTask {
   status: string;
   userId: string;
 }
-
 
 export interface isloginInterface {
   authStore: {
@@ -98,8 +93,6 @@ export interface AuthStore {
   password: string;
 }
 
-
-
 export interface loginState {
   authStore: {
     user: {
@@ -108,15 +101,13 @@ export interface loginState {
   };
 }
 
-
 export interface rowsState {
   taskStore: {
     rows: [];
   };
 }
 
-
-export  interface Data {
+export interface Data {
   id?: string;
   name: string;
   description: string;
@@ -133,7 +124,6 @@ export interface authStorPayload {
     };
   };
 }
-
 
 export interface ListRow {
   id: string;
@@ -152,18 +142,21 @@ export interface Column {
   format?: (value: number) => string;
 }
 
-
 export interface rowData {
   taskStore: {
     rows: Row[];
     searchQuery: string;
     filterStatus: string;
   };
-} 
-
+}
 
 export interface Navigation {
   authStore: {
     isLoggedIn: boolean;
   };
+}
+
+export interface ExtendedUser {
+  userId: string;
+  accessToken?: string;
 }

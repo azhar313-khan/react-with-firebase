@@ -7,6 +7,7 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
+        return uid;
       } else {
       }
     });

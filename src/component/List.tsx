@@ -26,7 +26,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import Switch from "@mui/joy/Switch";
 import "./Add.css";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar, SnackbarMessage } from "notistack";
+import { useSnackbar } from "notistack";
 import { useEffect, useMemo, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -36,6 +36,7 @@ import { useSelector, useDispatch } from "react-redux";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import type { AppDispatch } from "../store/store";
+import { Routes as Url } from "../assets/urls";
 
 import {
   search,
@@ -161,8 +162,8 @@ const List = () => {
 
   const handleDeleteClick = (row: Data) => {
     const { id } = row;
-    if (id === undefined) {
-      console.error("Task ID is undefined");
+    if (!id) {
+      console.error("ID is falsy");
       return;
     }
     Swal.fire({
@@ -243,7 +244,6 @@ const List = () => {
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
     dispatch(logout());
     dispatch(logoutUser());
     dispatch(clearAll());

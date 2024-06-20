@@ -12,16 +12,14 @@ const initialState: MyState = {
   isLodding: false,
 };
 
-
-
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   try {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("User", user);
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        await auth.signOut();
         return user;
       } else {
-        return "auth";
+        return user;
       }
     });
   } catch (error) {
@@ -74,8 +72,9 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.isLoggedIn = false;
-        state.isLoggedIn = true;
+        if (action.payload.accessToken) {
+          state.isLoggedIn = true;
+        }
         state.user = action.payload ?? null;
       })
       .addCase(loginUser.rejected, (state, action) => {

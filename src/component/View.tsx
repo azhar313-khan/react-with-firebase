@@ -30,11 +30,11 @@ const View = () => {
     if (id) {
       dispatch(fetchTaskByid(id));
     } else {
-      console.error("ID is undefined");
+      console.error("ID is falsy");
     }
   }, [dispatch, id]);
   return (
-    <>
+    <div style={{ marginTop: "40px" }}>
       <h1 style={{ textAlign: "center" }}>{ViewComponent.view_page}</h1>
       <Card style={{ margin: "auto", width: "60%" }}>
         <CardContent>
@@ -62,7 +62,7 @@ const View = () => {
           </Button>
         </CardActions>
       </Card>
-    </>
+    </div>
   );
 };
 
