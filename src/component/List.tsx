@@ -36,7 +36,6 @@ import { useSelector, useDispatch } from "react-redux";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import type { AppDispatch } from "../store/store";
-import { Routes as Url } from "../assets/urls";
 
 import {
   search,
@@ -243,7 +242,7 @@ const List = () => {
     rediect("/add");
   };
 
-  const handleClose = () => {
+  const handleClose = (event: React.MouseEvent<HTMLElement>) => {
     dispatch(logout());
     dispatch(logoutUser());
     dispatch(clearAll());
@@ -252,6 +251,9 @@ const List = () => {
 
   const goToLoginPage = () => {
     rediect("/login");
+  };
+  const goTOForms = () => {
+    rediect("/forms");
   };
 
   return (
@@ -336,8 +338,7 @@ const List = () => {
                   sx={{ mt: "45px" }}
                 >
                   <MenuItem onClick={handleClose}>
-                    {" "}
-                    {ListComponent.logout}
+                    {ListComponent.logout}22
                   </MenuItem>
                 </Menu>
               </div>
@@ -363,6 +364,14 @@ const List = () => {
             style={{ marginRight: "30px", float: "right" }}
           >
             {ListComponent.addTask}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => goTOForms()}
+            style={{ marginRight: "30px", float: "right" }}
+          >
+            Pages
           </Button>
           <div className="displayv">
             <div className="searchBox">

@@ -5,4 +5,5 @@ export const Routes = {
   ADD: "/add",
   EDIT: "/edit/:id",
   VIEW: "/view/:id",
+  FORMS: "/forms",
 };

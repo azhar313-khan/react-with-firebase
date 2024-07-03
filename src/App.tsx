@@ -11,6 +11,7 @@ const Add = lazy(() => import("./component/Add"));
 const Edit = lazy(() => import("./component/Edit"));
 const View = lazy(() => import("./component/View"));
 const AuthRouter = lazy(() => import("./component/protectRoute/AuthRouter"));
+const Forms = lazy(() => import("./component/Pages/Forms"));
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path={Url.HOME} element={<List />} />
           <Route path={Url.SIGNUP} element={<Signup />} />
           <Route path={Url.LOGIN} element={<Login />} />
+          <Route path={Url.FORMS} element={<Forms />} />
           <Route element={<AuthRouter />}>
             <Route path={Url.ADD} element={<Add />} />
             <Route path={Url.EDIT} element={<Edit />} />
