@@ -24,9 +24,13 @@ import ModeIcon from "@mui/icons-material/Mode";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import TitleIcon from "@mui/icons-material/Title";
 import AppsIcon from "@mui/icons-material/Apps";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Forms.css";
+import React from "react";
 
 const Container = styled.div`
   // height: 400px;
@@ -42,20 +46,34 @@ const Container = styled.div`
 `;
 
 function Forms() {
-  const [anchorElPage, setAnchorElPage] = useState(null);
-  const [anchorElSection, setAnchorElSection] = useState(null);
-  const [currentPageIndex, setCurrentPageIndex] = useState(null);
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(null);
+  // const [anchorElPage, setAnchorElPage] = useState(null);
+  // const [anchorElSection, setAnchorElSection] = useState(null);
+  // const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  // const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const [time, setItme] = useState(new Date().toLocaleTimeString());
 
+  const [anchorElPage, setAnchorElPage] = useState<HTMLElement | null>(null);
+  const [anchorElSection, setAnchorElSection] = useState<HTMLElement | null>(
+    null
+  );
+  const [currentPageIndex, setCurrentPageIndex] = useState<number | null>(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState<number | null>(
+    null
+  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
+
   const [pages, setPages] = useState([
     {
+      visible: true,
       sections: [
         {
+          sectionVisible: true,
           inputField: [
             {
               value: "",
+              ref: React.createRef<HTMLInputElement>(),
             },
           ],
         },
@@ -67,6 +85,31 @@ function Forms() {
     pages.map((page) => page.sections.map(() => true))
   );
 
+  const focusInputField = (
+    pageIndex: number,
+    sectionIndex: number,
+    inputIndex: number
+  ) => {
+    const inputFieldRef =
+      pages?.[pageIndex]?.sections?.[sectionIndex]?.inputField?.[inputIndex]
+        ?.ref;
+    inputFieldRef?.current?.focus();
+  };
+
+  const indexOfLastPage = currentPage * itemsPerPage;
+  const indexOfFirstPage = indexOfLastPage - itemsPerPage;
+  const currentPages = pages.slice(indexOfFirstPage, indexOfLastPage);
+
+  const totalPages = Math.ceil(pages.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
+  };
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setItme(new Date().toLocaleTimeString());
@@ -75,15 +118,50 @@ function Forms() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleToggleSection = (pageIndex) => {
-    // setVisibleSections((prevState) =>
-    //   prevState.map((visible, index) =>
-    //     index === pageIndex ? !visible : visible
-    //   )
-    // );
+  useEffect(() => {
+    if (currentPageIndex !== null && currentSectionIndex !== null) {
+      const lastInputIndex =
+        pages[currentPageIndex]?.sections[currentSectionIndex]?.inputField
+          .length - 1;
+      if (lastInputIndex !== undefined && lastInputIndex >= 0) {
+        focusInputField(currentPageIndex, currentSectionIndex, lastInputIndex);
+      }
+    }
+  }, [pages]);
+
+  const handleToggleVisibility = (pageIndex) => {
+    setPages((prevPages) =>
+      prevPages.map((page, index) =>
+        index === pageIndex
+          ? {
+              ...page,
+              sections: page.sections.map((section, index) =>
+                index === sectionIndex
+                  ? { ...section, sectionVisible: !section.sectionVisible }
+                  : section
+              ),
+            }
+          : page
+      )
+    );
   };
 
-  console.log(visibleSections, "visibleSections");
+  const handleToggleVisibilitySection = (pageIndex, sectionIndex) => {
+    setPages((prevPages) =>
+      prevPages.map((page, index) =>
+        index === pageIndex
+          ? {
+              ...page,
+              sections: page.sections.map((section, index) =>
+                index === sectionIndex
+                  ? { ...section, sectionVisible: !section.sectionVisible }
+                  : section
+              ),
+            }
+          : page
+      )
+    );
+  };
 
   const handleClickPage = (event, index) => {
     setAnchorElPage(event.currentTarget);
@@ -95,8 +173,57 @@ function Forms() {
     setCurrentPageIndex(null);
   };
 
+  // const handleAddPage = () => {
+  //   // setPages([
+  //   //   ...pages,
+  //   //   {
+  //   //     visible: true,
+  //   //     sections: [{ sectionVisible: true, inputField: [{ value: "" }] }],
+  //   //   },
+  //   // ]);
+  //   // handleClosePage();
+  //   const newPage = {
+  //     visible: true,
+  //     sections: [
+  //       {
+  //         sectionVisible: true,
+  //         inputField: [{ value: "", ref: React.createRef() }],
+  //       },
+  //     ],
+  //   };
+
+  //   setPages((prevPages) => {
+  //     const updatedPages = [...prevPages, newPage];
+  //     // Use setTimeout to ensure the state update completes before focusing the input
+  //     setTimeout(() => {
+  //       newPage?.sections[0]?.inputField[0]?.ref?.current?.focus();
+  //     }, 0);
+
+  //     return updatedPages;
+  //   });
+  // };
+
   const handleAddPage = () => {
-    setPages([...pages, { sections: [{ inputField: [{ value: "" }] }] }]);
+    const newInputField = {
+      value: "",
+      ref: React.createRef<HTMLInputElement>(),
+    };
+    const newPage = {
+      visible: true,
+      sections: [{ sectionVisible: true, inputField: [newInputField] }],
+    };
+
+    setPages((prevPages) => {
+      const updatedPages = [...prevPages, newPage];
+
+      // Use setTimeout to ensure the state update completes before focusing the input
+      setTimeout(() => {
+        newInputField.ref.current?.focus();
+      }, 0);
+
+      return updatedPages;
+    });
+
     handleClosePage();
   };
 
@@ -107,6 +234,10 @@ function Forms() {
   };
 
   const handleAddSection = (pageIndex) => {
+    const newInputField = {
+      value: "",
+      ref: React.createRef<HTMLInputElement>(),
+    };
     const newPages = pages.map((page, i) => {
       if (i === pageIndex) {
         return {
@@ -114,11 +245,8 @@ function Forms() {
           sections: [
             ...page.sections,
             {
-              inputField: [
-                {
-                  value: "",
-                },
-              ],
+              sectionVisible: true,
+              inputField: [newInputField],
             },
           ],
         };
@@ -126,6 +254,9 @@ function Forms() {
       return page;
     });
     setPages(newPages);
+    setTimeout(() => {
+      newInputField.ref.current?.focus();
+    }, 0);
     handleCloseSection();
   };
 
@@ -152,13 +283,17 @@ function Forms() {
   };
 
   const handleAddInput = (pageIndex, sectionIndex) => {
+    const newInputField = {
+      value: "",
+      ref: React.createRef<HTMLInputElement>(),
+    };
     const newPages = pages.map((page, i) => {
       if (i === pageIndex) {
         const newSections = page.sections.map((section, j) => {
           if (j === sectionIndex) {
             return {
               ...section,
-              inputField: [...section.inputField, { value: "" }],
+              inputField: [...section.inputField, newInputField],
             };
           }
           return section;
@@ -167,6 +302,9 @@ function Forms() {
       }
       return page;
     });
+    setTimeout(() => {
+      newInputField.ref.current?.focus();
+    }, 0);
     setPages(newPages);
   };
 
@@ -212,6 +350,7 @@ function Forms() {
   };
   return (
     <>
+      {/* Desktop View */}
       <div
         style={{
           background: "ghostwhite",
@@ -221,35 +360,40 @@ function Forms() {
       >
         <div
           style={{
-            marginTop: "12px",
-            marginLeft: "70px",
+            marginTop: "20px",
+            marginLeft: "20px",
             background: "#d7faf7",
-            paddingRight: "17px",
-            paddingLeft: "20px",
+            paddingRight: "10px",
+            paddingLeft: "10px",
             paddingTop: "0px",
             color: "#00c8ff",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             borderRadius: "10px",
+            width: "50px",
+            height: "50px",
           }}
         >
           <NoteAddOutlinedIcon
             fontSize="large"
             sx={{
               alignItems: "center",
+              paddingRight: "10px",
               justifyContent: "center",
-              height: "50px", // Set the height of the background to 200px
+              height: "30px", // Set the height of the background to 200px
               width: "auto", // Adjust width as needed
             }}
           />
         </div>
 
-        <div style={{ padding: "10px", marginTop: "10px" }}>
-          <h5>
-            Heading <ModeIcon />
+        <div style={{ padding: "10px", marginTop: "-20px" }}>
+          <h5 style={{ marginBottom: "0", marginTop: "18px" }}>
+            Heading <ModeEditOutlineOutlinedIcon sx={{ margin: "10px" }} />
           </h5>
-          <p>SubTitle</p>
+          <p style={{ padding: "0px", marginTop: "0", marginBottom: "0" }}>
+            SubTitle
+          </p>
         </div>
       </div>
       <div
@@ -258,14 +402,15 @@ function Forms() {
           background: "ghostwhite",
 
           display: "flex",
-          padding: "60px",
+          padding: "50px 60px 60px 60px",
           height: "860px",
+          paddingLeft: "18px",
         }}
       >
         {pages.length > 0 ? (
           <div
             style={{
-              width: "77%",
+              width: "83%",
               display: "ruby-text",
               justifyContent: "center",
               alignItems: "center",
@@ -280,10 +425,11 @@ function Forms() {
               <>
                 <Card
                   sx={{
-                    width: "95%",
+                    width: "98%",
                     borderRadius: "10px",
                     marginBottom: "20px",
-                    background: "ghostwhite",
+                    // background: "#f4f4f400",
+                    background: "rgba(158, 158, 158, 0.23)",
                     border: "1px ridge",
                   }}
                   key={pageIndex}
@@ -293,6 +439,7 @@ function Forms() {
                       background: "white",
                       color: "block",
                       padding: "7px",
+                      height: "48px",
                     }}
                     action={
                       <>
@@ -311,263 +458,301 @@ function Forms() {
                     title={
                       <Typography
                         variant="h6"
-                        style={{ fontSize: "18px", fontWeight: "bold" }}
+                        style={{ fontSize: "12px", fontWeight: "bold" }}
                       >
-                        {/* <KeyboardArrowRightIcon
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleToggleSection(pageIndex)}
-                        /> */}
-                        {visibleSections[pageIndex] && (
+                        {page.visible ? (
                           <KeyboardArrowDownIcon
                             style={{ cursor: "pointer" }}
-                            onClick={() => handleToggleSection(pageIndex)}
+                            onClick={() => handleToggleVisibility(pageIndex)}
+                          />
+                        ) : (
+                          <KeyboardArrowRightIcon
+                            style={{ cursor: "pointer", margin: "10px" }}
+                            onClick={() => handleToggleVisibility(pageIndex)}
                           />
                         )}
 
-                        {/* {visibleSections[!pageIndex] && ( */}
-                        {/* <KeyboardArrowRightIcon
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleToggleSection(pageIndex)}
-                        /> */}
-                        {/* )} */}
-
                         {`Page ${pageIndex + 1}`}
-                        <ModeIcon
-                          style={{ margin: "10px", cursor: "pointer" }}
+                        <ModeEditOutlineOutlinedIcon
+                          style={{
+                            margin: "10px",
+                            cursor: "pointer",
+                            marginTop: "0",
+                          }}
                         />
                       </Typography>
                     }
                   />
 
-                  {/* {visibleSections[pageIndex] && ( */}
-                  <CardContent>
-                    <div
-                      style={{
-                        margin: "10px",
-                        marginLeft: "90px",
-                        marginRight: "90px",
-                      }}
-                    >
-                      {page.sections.map((section, sectionIndex) => (
-                        <div
-                          style={{ marginBottom: "10px" }}
-                          key={sectionIndex}
-                        >
-                          <Card
-                            sx={{
-                              width: "100%",
-                              borderRadius: "10px",
-                            }}
+                  {page.visible && (
+                    <CardContent>
+                      <div
+                        style={{
+                          margin: "0px 37px 0 94px",
+                        }}
+                      >
+                        {page.sections.map((section, sectionIndex) => (
+                          <div
+                            style={{ marginBottom: "10px" }}
+                            key={sectionIndex}
                           >
-                            <CardHeader
-                              style={{ background: "blue", color: "#fff" }}
-                              action={
-                                <IconButton aria-label="settings">
-                                  <p
+                            <Card
+                              sx={{
+                                width: "100%",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              <CardHeader
+                                style={{
+                                  background: "rgb(53, 45, 242)",
+                                  color: "#fff",
+                                  height: "50px",
+                                }}
+                                action={
+                                  <IconButton aria-label="settings">
+                                    <p
+                                      style={{
+                                        background: "rgb(53, 45, 242)",
+                                        color: "#fff",
+                                        marginBottom: "0px",
+                                        marginRight: "5px",
+                                        fontSize: "15px",
+                                      }}
+                                    >
+                                      {section?.inputField?.length > 0
+                                        ? section?.inputField.length
+                                        : ""}
+                                    </p>
+                                    <MoreHorizIcon
+                                      aria-controls="section-menu"
+                                      aria-haspopup="true"
+                                      onClick={(event) =>
+                                        handleClickSection(event, sectionIndex)
+                                      }
+                                      style={{ color: "white" }}
+                                    />
+                                  </IconButton>
+                                }
+                                title={
+                                  <Typography
+                                    variant="h6"
                                     style={{
-                                      background: "blue",
-                                      color: "#fff",
-                                      marginBottom: "0px",
-                                      marginRight: "5px",
-                                      fontSize: "15px",
+                                      fontSize: "12px",
+                                      fontWeight: "bold",
                                     }}
                                   >
-                                    {section?.inputField?.length > 0
-                                      ? section?.inputField.length
-                                      : ""}
-                                  </p>
-                                  <MoreHorizIcon
-                                    aria-controls="section-menu"
-                                    aria-haspopup="true"
-                                    onClick={(event) =>
-                                      handleClickSection(event, sectionIndex)
-                                    }
-                                    style={{ color: "white" }}
-                                  />
-                                </IconButton>
-                              }
-                              title={
-                                <Typography
-                                  variant="h6"
-                                  style={{
-                                    fontSize: "16px",
-                                    fontWeight: "bold",
-                                  }}
-                                >
-                                  <KeyboardArrowDownIcon />
-                                  {`Section ${sectionIndex + 1}`}{" "}
-                                  <ModeIcon
-                                    style={{
-                                      margin: "10px",
-                                      cursor: "pointer",
-                                    }}
-                                  />
-                                </Typography>
-                              }
-                            />
-                            <Menu
-                              id="section-menu"
-                              anchorEl={anchorElSection}
-                              keepMounted
-                              open={
-                                Boolean(anchorElSection) &&
-                                currentSectionIndex === sectionIndex
-                              }
-                              onClose={handleCloseSection}
-                            >
-                              <MenuItem
-                                onClick={() => handleAddSection(pageIndex)}
-                              >
-                                Add Section
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() =>
-                                  handleRemoveSection(pageIndex, sectionIndex)
-                                }
-                              >
-                                Delete Section
-                              </MenuItem>
-                            </Menu>
-                            <CardContent>
-                              <div>
-                                {section.inputField.map(
-                                  (inputValue, inputIndex) => (
-                                    <div
-                                      className="input-container"
-                                      style={{ marginBottom: "10px" }}
-                                      key={inputIndex}
-                                    >
-                                      <AppsIcon
+                                    {section?.sectionVisible ? (
+                                      <KeyboardArrowDownIcon
                                         sx={{
-                                          height: "40px",
-                                          margin: "6px",
-                                          color: "#ccc",
+                                          margin: "10px",
+                                          cursor: "pointer",
                                         }}
-                                      />
-                                      <TextField
-                                        fullWidth
-                                        id="fullWidth"
-                                        style={{ width: "100%" }}
-                                        sx={{
-                                          "& .MuiOutlinedInput-root": {
-                                            "& fieldset": {
-                                              borderColor: "#ccc", // Default border color
-                                            },
-                                            "&:hover fieldset": {
-                                              borderColor: "#ccc", // Border color when hovering
-                                            },
-                                            "&.Mui-focused fieldset": {
-                                              borderColor: "#0d6efd", // Border color when focused
-                                              borderWidth: "3px", // Border width when focused
-                                            },
-                                          },
-                                        }}
-                                        value={inputValue.value}
-                                        type="text"
-                                        placeholder="Enter the question"
-                                        onChange={(e) =>
-                                          handleInputValue(
+                                        onClick={() =>
+                                          handleToggleVisibilitySection(
                                             pageIndex,
-                                            sectionIndex,
-                                            inputIndex,
-                                            e
+                                            sectionIndex
                                           )
                                         }
-                                        onFocus={() =>
-                                          setFocusedInputIndex(inputIndex)
-                                        }
-                                        onBlur={() =>
-                                          setFocusedInputIndex(null)
+                                      />
+                                    ) : (
+                                      <KeyboardArrowRightIcon
+                                        sx={{
+                                          margin: "10px",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() =>
+                                          handleToggleVisibilitySection(
+                                            pageIndex,
+                                            sectionIndex
+                                          )
                                         }
                                       />
-                                      <>
-                                        <CardActions disableSpacing>
-                                          <Tooltip title="Delete">
-                                            <IconButton
-                                              aria-label="Delete"
-                                              style={{ margin: "6px" }}
-                                              onClick={() =>
-                                                handleRemoveQuestion(
-                                                  pageIndex,
-                                                  sectionIndex,
-                                                  inputIndex
-                                                )
-                                              }
-                                            >
-                                              <DeleteForeverIcon
-                                                sx={{ color: pink[500] }}
-                                              />
-                                            </IconButton>
-                                          </Tooltip>
-                                          <Tooltip title="Add Question">
-                                            <IconButton
-                                              aria-label="Question"
-                                              onClick={() =>
-                                                handleAddInput(
-                                                  pageIndex,
-                                                  sectionIndex
-                                                )
-                                              }
-                                            >
-                                              <ControlPointOutlinedIcon
-                                                sx={{ color: blue[500] }}
-                                              />
-                                            </IconButton>
-                                          </Tooltip>
-                                        </CardActions>
-                                      </>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            </CardContent>
-                            <CardActions disableSpacing>
-                              <Tooltip title="Add Question">
-                                <IconButton
-                                  aria-label="Question"
+                                    )}
+                                    {`Section ${sectionIndex + 1}`}{" "}
+                                    <ModeEditOutlineOutlinedIcon
+                                      style={{
+                                        margin: "10px",
+                                        cursor: "pointer",
+                                        marginTop: "0",
+                                      }}
+                                    />
+                                  </Typography>
+                                }
+                              />
+                              <Menu
+                                id="section-menu"
+                                anchorEl={anchorElSection}
+                                keepMounted
+                                open={
+                                  Boolean(anchorElSection) &&
+                                  currentSectionIndex === sectionIndex
+                                }
+                                onClose={handleCloseSection}
+                              >
+                                <MenuItem
+                                  onClick={() => handleAddSection(pageIndex)}
+                                >
+                                  Add Section
+                                </MenuItem>
+                                <MenuItem
                                   onClick={() =>
-                                    handleAddInput(pageIndex, sectionIndex)
+                                    handleRemoveSection(pageIndex, sectionIndex)
                                   }
                                 >
-                                  <ControlPointOutlinedIcon
-                                    sx={{ color: blue[500] }}
-                                  />
-                                </IconButton>
-                              </Tooltip>
-                            </CardActions>
-                          </Card>
-                        </div>
-                      ))}
-                    </div>
-                    <div
-                      style={{
-                        color: "#00c8ff",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <Button
-                        sx={{ background: "white", left: "81px" }}
-                        onClick={() => handleAddSection(pageIndex)}
-                      >
-                        <PostAddIcon
-                          fontSize="large"
-                          sx={{
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: "20px",
-                            width: "auto",
-                          }}
-                        />
+                                  Delete Section
+                                </MenuItem>
+                              </Menu>
+                              {section.sectionVisible && (
+                                <CardContent
+                                  style={{
+                                    padding: "16px",
+                                    marginTop: "-14px",
+                                  }}
+                                >
+                                  <div style={{ padding: "0px" }}>
+                                    {section.inputField.map(
+                                      (inputValue, inputIndex) => (
+                                        <>
+                                          <div
+                                            className="input-container"
+                                            style={
+                                              {
+                                                // marginBottom: "-33px",
+                                                // border: "2px solid #0d6efd",
+                                              }
+                                            }
+                                            key={inputIndex}
+                                          >
+                                            <AppsIcon
+                                              sx={{
+                                                height: "40px",
+                                                margin: "6px",
+                                                color: "#ccc",
+                                              }}
+                                            />
 
-                        <Typography variant="h6" style={{ fontSize: "10px" }}>
-                          Add Section
-                        </Typography>
-                      </Button>
-                    </div>
-                  </CardContent>
-                  {/* )} */}
+                                            <TextField
+                                              fullWidth
+                                              id="fullWidth"
+                                              variant="filled"
+                                              style={{
+                                                width: "100%",
+                                                padding: "10px",
+                                              }}
+                                              sx={{
+                                                "& .MuiFilledInput-root": {
+                                                  backgroundColor: "white", // Ensure the background is white
+                                                  "&:before": {
+                                                    borderBottom: "none", // Remove the bottom border before focus
+                                                  },
+                                                  "&:after": {
+                                                    borderBottom: "none", // Remove the bottom border after focus
+                                                  },
+                                                  "&:hover:not(.Mui-disabled):before":
+                                                    {
+                                                      borderBottom: "none", // Remove the bottom border on hover
+                                                    },
+                                                },
+                                              }}
+                                              value={inputValue.value}
+                                              inputRef={inputValue.ref}
+                                              type="text"
+                                              placeholder="Enter the question"
+                                              onChange={(e) =>
+                                                handleInputValue(
+                                                  pageIndex,
+                                                  sectionIndex,
+                                                  inputIndex,
+                                                  e
+                                                )
+                                              }
+                                              onFocus={() =>
+                                                setFocusedInputIndex(inputIndex)
+                                              }
+                                              onBlur={() =>
+                                                setFocusedInputIndex(null)
+                                              }
+                                            />
+                                            <>
+                                              <CardActions disableSpacing>
+                                                <Tooltip title="Delete">
+                                                  <IconButton
+                                                    aria-label="Delete"
+                                                    style={{ margin: "6px" }}
+                                                    onClick={() =>
+                                                      handleRemoveQuestion(
+                                                        pageIndex,
+                                                        sectionIndex,
+                                                        inputIndex
+                                                      )
+                                                    }
+                                                  >
+                                                    <DeleteForeverIcon
+                                                      sx={{ color: pink[500] }}
+                                                    />
+                                                  </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Add Question">
+                                                  <IconButton
+                                                    aria-label="Question"
+                                                    onClick={() =>
+                                                      handleAddInput(
+                                                        pageIndex,
+                                                        sectionIndex
+                                                      )
+                                                    }
+                                                  >
+                                                    <ControlPointOutlinedIcon
+                                                      sx={{ color: blue[500] }}
+                                                    />
+                                                  </IconButton>
+                                                </Tooltip>
+                                              </CardActions>
+                                            </>
+                                          </div>
+                                          {/* <hr style={{ margin: "0px" }} /> */}
+                                        </>
+                                      )
+                                    )}
+                                  </div>
+                                </CardContent>
+                              )}
+                            </Card>
+                          </div>
+                        ))}
+                      </div>
+                      <div
+                        style={{
+                          color: "#00c8ff",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <Button
+                          sx={{ background: "white", left: "81px" }}
+                          onClick={() => handleAddSection(pageIndex)}
+                        >
+                          <PostAddIcon
+                            fontSize="large"
+                            sx={{
+                              alignItems: "center",
+                              justifyContent: "center",
+                              height: "15px",
+                              width: "auto",
+                            }}
+                          />
+
+                          <Typography
+                            variant="h6"
+                            style={{ fontSize: "10px", color: "#212121" }}
+                          >
+                            Add Section
+                          </Typography>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  )}
                   <Menu
                     id="page-menu"
                     anchorEl={anchorElPage}
@@ -583,7 +768,7 @@ function Forms() {
                     </MenuItem>
                   </Menu>
                 </Card>
-                {/* Add Page button */}
+
                 <div
                   style={{
                     height: "100px",
@@ -603,11 +788,14 @@ function Forms() {
                       sx={{
                         alignItems: "center",
                         justifyContent: "center",
-                        height: "20px",
+                        height: "15px",
                         width: "auto",
                       }}
                     />
-                    <Typography variant="h6" style={{ fontSize: "10px" }}>
+                    <Typography
+                      variant="h6"
+                      style={{ fontSize: "10px", color: "#212121" }}
+                    >
                       Add Page
                     </Typography>
                   </Button>
@@ -630,13 +818,14 @@ function Forms() {
                 alignItems: "center",
                 borderRadius: "10px",
                 cursor: "pointer",
+                width: "61%",
               }}
             >
               <NoteAddOutlinedIcon
                 fontSize="large"
                 sx={{
                   marginTop: "12%",
-                  marginLeft: "30%",
+                  marginLeft: "9%",
                   height: "85px", // Set the height of the background to 200px
                   width: "auto", // Adjust width as needed
                 }}
@@ -662,175 +851,612 @@ function Forms() {
             </div>
           </>
         )}
-
+        {/* Mobile View */}
         <div>
-          <div className="smartphone" style={{ width: "20%" }}>
-            <span style={{ paddingLeft: "21px" }}>{time}</span>
-            <div style={{ float: "right", marginRight: "20px" }}>
-              <SignalCellularAltIcon />
-              <WifiIcon />
-              <Battery60OutlinedIcon />
-            </div>
-
-            {pages.length > 0 ? (
-              <>
-                <Container className="card-container">
-                  {pages.map((page, pageIndex) => (
-                    <Card
-                      sx={{
-                        width: "100%",
-                        borderRadius: "10px",
-                        marginBottom: "20px",
-                        background: "aliceblue",
-                        height: "fit-content",
-                        minHeight: "510px",
+          {pages.length > 0 ? (
+            <div>
+              <div
+                style={{
+                  width: "268px",
+                  height: "532px",
+                  /* background: red; */
+                  border: "11px solid rgb(158 158 158 / 23%)",
+                  borderRadius: "39px",
+                }}
+              >
+                <div className="smartphone" style={{ width: "13.5%" }}>
+                  <div style={{ marginTop: "-75px" }}>
+                    <span style={{ paddingLeft: "12px", fontSize: "12px" }}>
+                      {time}
+                    </span>
+                    <div
+                      style={{
+                        float: "right",
+                        marginRight: "12px",
                       }}
-                      key={pageIndex}
                     >
-                      <CardHeader
-                        sx={{
-                          background: "#f8f8ff00",
-                          color: "block",
-                          textAlign: "center",
-                        }}
+                      <SignalCellularAltIcon sx={{ fontSize: "12px" }} />
+                      <WifiIcon sx={{ fontSize: "12px" }} />
+                      <Battery60OutlinedIcon sx={{ fontSize: "12px" }} />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <KeyboardArrowLeftOutlinedIcon
+                        sx={{ fontSize: "25px" }}
                       />
-                      <p
-                        style={{ marginBottom: "8px", textAlign: "center" }}
-                      >{`Page ${pageIndex + 1}`}</p>
-                      <CardContent style={{ height: "fit-content" }}>
-                        <div style={{ margin: "-10px" }}>
-                          {page.sections.map((section, sectionIndex) => (
-                            <div
-                              style={{ marginBottom: "10px" }}
-                              key={sectionIndex}
-                            >
-                              <Card
-                                sx={{
-                                  width: "100%",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                <CardHeader
-                                  style={{ background: "blue", color: "#fff" }}
-                                  title={
-                                    <Typography
-                                      variant="h6"
+                      <p style={{ marginBottom: "0px" }}>Heading </p>
+                      <MoreHorizIcon sx={{ float: "right", margin: "10px" }} />
+                    </div>
+                  </div>
+
+                  {pages.length > 0 ? (
+                    <>
+                      <Container className="card-container">
+                        {currentPages.map((page, pageIndex) => (
+                          <Card
+                            sx={{
+                              width: "100%",
+                              borderRadius: "10px",
+                              marginBottom: "20px",
+                              background: "aliceblue",
+                              height: "fit-content",
+                              minHeight: "350px",
+                            }}
+                            key={indexOfFirstPage + pageIndex}
+                          >
+                            <p
+                              style={{
+                                textAlign: "center",
+                                background: "#9e9e9e3d",
+                                height: "50px",
+                                marginBottom: "-37px",
+                                fontSize: "12px",
+                              }}
+                            >{`Page ${indexOfFirstPage + pageIndex + 1}`}</p>
+                            <hr
+                              style={{
+                                marginTop: -"28px",
+                                border: "2px solid rgb(132 158 158)",
+                                marginRight: "9px",
+                                marginLeft: "9px",
+                              }}
+                            />
+                            <CardHeader
+                              sx={{
+                                background: "rgb(158 158 158 / 4%)",
+                                color: "block",
+                                textAlign: "center",
+                                padding: "0px",
+                                borderBottom: "2px ridge",
+                              }}
+                            />
+                            <CardContent style={{ height: "fit-content" }}>
+                              <div style={{ margin: "-10px" }}>
+                                {page.sections.map((section, sectionIndex) => (
+                                  <div
+                                    style={{
+                                      marginBottom: "10px",
+                                    }}
+                                    key={sectionIndex}
+                                  >
+                                    {/* <Card
+                                  sx={{
+                                    width: "100%",
+                                    borderRadius: "10px",
+                                  }}
+                                > */}
+                                    <CardHeader
                                       style={{
-                                        fontSize: "16px",
-                                        fontWeight: "bold",
+                                        background: "rgb(53, 45, 242)",
+                                        color: "#fff",
+                                        height: "40px",
+                                        borderRadius: "9px",
                                       }}
-                                    >
-                                      <KeyboardArrowDownIcon />
-                                      {`Section ${sectionIndex + 1}`}
-                                    </Typography>
-                                  }
-                                />
-                                <Menu
-                                  id="section-menu"
-                                  anchorEl={anchorElSection}
-                                  keepMounted
-                                  open={
-                                    Boolean(anchorElSection) &&
-                                    currentSectionIndex === sectionIndex
-                                  }
-                                  onClose={handleCloseSection}
-                                >
-                                  <MenuItem
-                                    onClick={() => handleAddSection(pageIndex)}
-                                  >
-                                    Add Section
-                                  </MenuItem>
-                                  <MenuItem
-                                    onClick={() =>
-                                      handleRemoveSection(
-                                        pageIndex,
-                                        sectionIndex
-                                      )
-                                    }
-                                  >
-                                    Delete Section
-                                  </MenuItem>
-                                </Menu>
-                                <CardContent>
-                                  <div>
-                                    {section.inputField.map(
-                                      (inputValue, inputIndex) => (
-                                        <div
-                                          className="input-container"
-                                          style={{ marginBottom: "10px" }}
-                                          key={inputIndex}
+                                      title={
+                                        <Typography
+                                          variant="h6"
+                                          style={{
+                                            fontSize: "12px",
+                                            fontWeight: "bold",
+                                          }}
                                         >
-                                          <TextField
-                                            fullWidth
-                                            id="fullWidth"
-                                            // style={{ width: "80%" }}
-                                            value={inputValue.value}
-                                            type="text"
-                                            placeholder="Enter the question"
-                                            onChange={(e) =>
-                                              handleInputValue(
+                                          <KeyboardArrowDownIcon />
+                                          {`Section ${sectionIndex + 1}`}
+                                        </Typography>
+                                      }
+                                    />
+                                    <Menu
+                                      id="section-menu"
+                                      anchorEl={anchorElSection}
+                                      keepMounted
+                                      open={
+                                        Boolean(anchorElSection) &&
+                                        currentSectionIndex === sectionIndex
+                                      }
+                                      onClose={handleCloseSection}
+                                    >
+                                      <MenuItem
+                                        onClick={() =>
+                                          handleAddSection(pageIndex)
+                                        }
+                                      >
+                                        Add Section
+                                      </MenuItem>
+                                      <MenuItem
+                                        onClick={() =>
+                                          handleRemoveSection(
+                                            pageIndex,
+                                            sectionIndex
+                                          )
+                                        }
+                                      >
+                                        Delete Section
+                                      </MenuItem>
+                                    </Menu>
+                                    {/* <div
+                                  style={{
+                                    background: "aliceblue",
+                                    height: "8px",
+                                  }}
+                                ></div> */}
+                                    <CardContent>
+                                      <div>
+                                        {section.inputField.map(
+                                          (inputValue, inputIndex) => (
+                                            <>
+                                              <Card
+                                                className="input-container-mobile"
+                                                style={{
+                                                  marginBottom: "10px",
+                                                  background: "white",
+                                                }}
+                                                key={inputIndex}
+                                              >
+                                                {/* <Card
+                                              style={{
+                                                background: "blue",
+                                                padding: "20x",
+                                                borderBottom: "2px solid green",
+                                              }}
+                                            > */}
+                                                <CardContent>
+                                                  <TextField
+                                                    style={{
+                                                      background: "#fff",
+
+                                                      // background: "aliceblue",
+                                                    }}
+                                                    fullWidth
+                                                    id="fullWidth"
+                                                    // style={{ width: "80%" }}
+                                                    value={inputValue.value}
+                                                    type="text"
+                                                    placeholder="Enter"
+                                                    onChange={(e) =>
+                                                      handleInputValue(
+                                                        pageIndex,
+                                                        sectionIndex,
+                                                        inputIndex,
+                                                        e
+                                                      )
+                                                    }
+                                                  />
+                                                </CardContent>
+                                              </Card>
+                                              {/* </div> */}
+                                            </>
+                                          )
+                                        )}
+                                      </div>
+                                    </CardContent>
+                                    {/* </Card> */}
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                            <Menu
+                              id="page-menu"
+                              anchorEl={anchorElPage}
+                              keepMounted
+                              open={
+                                Boolean(anchorElPage) &&
+                                currentPageIndex === pageIndex
+                              }
+                              onClose={handleClosePage}
+                            >
+                              <MenuItem onClick={handleAddPage}>
+                                Add Page
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => handleRemovePage(pageIndex)}
+                              >
+                                Delete Page
+                              </MenuItem>
+                            </Menu>
+                          </Card>
+                        ))}
+                      </Container>
+                      <div>
+                        <Button
+                          sx={{
+                            background: "white",
+                            marginTop: "10px",
+                            left: "11px",
+                            fontSize: "12px",
+                          }}
+                          onClick={handlePreviousPage}
+                          disabled={currentPage <= 1}
+                        >
+                          Prev
+                        </Button>
+                        <Button
+                          sx={{
+                            background: "white",
+                            marginTop: "10px",
+                            left: "30px",
+                            fontSize: "12px",
+                          }}
+                        >
+                          Save
+                        </Button>
+
+                        <Button
+                          sx={{
+                            background: "white",
+                            marginTop: "10px",
+                            left: "51px",
+                            fontSize: "12px",
+                          }}
+                          onClick={handleNextPage}
+                          disabled={currentPage >= totalPages}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <Container>
+                      <Card
+                        sx={{
+                          width: "100%",
+                          borderRadius: "10px",
+                          marginBottom: "20px",
+                          background: "ghostwhite",
+                          height: "fit-content",
+                          minHeight: "510px",
+                        }}
+                      ></Card>
+                    </Container>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div>
+                <div
+                  style={{
+                    width: "268px",
+                    height: "532px",
+                    /* background: red; */
+                    border: "11px solid rgb(158 158 158 / 23%)",
+                    borderRadius: "39px",
+                  }}
+                >
+                  <div className="smartphone" style={{ width: "13.5%" }}>
+                    <div style={{ marginTop: "-75px" }}>
+                      <span style={{ paddingLeft: "12px", fontSize: "12px" }}>
+                        {time}
+                      </span>
+                      <div
+                        style={{
+                          float: "right",
+                          marginRight: "12px",
+                        }}
+                      >
+                        <SignalCellularAltIcon sx={{ fontSize: "12px" }} />
+                        <WifiIcon sx={{ fontSize: "12px" }} />
+                        <Battery60OutlinedIcon sx={{ fontSize: "12px" }} />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <KeyboardArrowLeftOutlinedIcon
+                          sx={{ fontSize: "25px" }}
+                        />
+                        <p style={{ marginBottom: "0px" }}>Heading </p>
+                        <MoreHorizIcon
+                          sx={{ float: "right", margin: "10px" }}
+                        />
+                      </div>
+                    </div>
+
+                    {pages.length > 0 ? (
+                      <>
+                        <Container className="card-container">
+                          {currentPages.map((page, pageIndex) => (
+                            <Card
+                              sx={{
+                                width: "100%",
+                                borderRadius: "10px",
+                                marginBottom: "20px",
+                                background: "aliceblue",
+                                height: "fit-content",
+                                minHeight: "350px",
+                              }}
+                              key={indexOfFirstPage + pageIndex}
+                            >
+                              <p
+                                style={{
+                                  textAlign: "center",
+                                  background: "#9e9e9e3d",
+                                  height: "50px",
+                                  marginBottom: "-37px",
+                                  fontSize: "12px",
+                                }}
+                              >{`Page ${indexOfFirstPage + pageIndex + 1}`}</p>
+                              <hr
+                                style={{
+                                  marginTop: -"28px",
+                                  border: "2px solid rgb(132 158 158)",
+                                  marginRight: "9px",
+                                  marginLeft: "9px",
+                                }}
+                              />
+                              <CardHeader
+                                sx={{
+                                  background: "rgb(158 158 158 / 4%)",
+                                  color: "block",
+                                  textAlign: "center",
+                                  padding: "0px",
+                                  borderBottom: "2px ridge",
+                                }}
+                              />
+                              <CardContent style={{ height: "fit-content" }}>
+                                <div style={{ margin: "-10px" }}>
+                                  {page.sections.map(
+                                    (section, sectionIndex) => (
+                                      <div
+                                        style={{
+                                          marginBottom: "10px",
+                                        }}
+                                        key={sectionIndex}
+                                      >
+                                        <CardHeader
+                                          style={{
+                                            background: "rgb(53, 45, 242)",
+                                            color: "#fff",
+                                            height: "40px",
+                                            borderRadius: "9px",
+                                          }}
+                                          title={
+                                            <Typography
+                                              variant="h6"
+                                              style={{
+                                                fontSize: "12px",
+                                                fontWeight: "bold",
+                                              }}
+                                            >
+                                              <KeyboardArrowDownIcon />
+                                              {`Section ${sectionIndex + 1}`}
+                                            </Typography>
+                                          }
+                                        />
+                                        <Menu
+                                          id="section-menu"
+                                          anchorEl={anchorElSection}
+                                          keepMounted
+                                          open={
+                                            Boolean(anchorElSection) &&
+                                            currentSectionIndex === sectionIndex
+                                          }
+                                          onClose={handleCloseSection}
+                                        >
+                                          <MenuItem
+                                            onClick={() =>
+                                              handleAddSection(pageIndex)
+                                            }
+                                          >
+                                            Add Section
+                                          </MenuItem>
+                                          <MenuItem
+                                            onClick={() =>
+                                              handleRemoveSection(
                                                 pageIndex,
-                                                sectionIndex,
-                                                inputIndex,
-                                                e
+                                                sectionIndex
                                               )
                                             }
-                                          />
-                                        </div>
-                                      )
-                                    )}
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </div>
+                                          >
+                                            Delete Section
+                                          </MenuItem>
+                                        </Menu>
+
+                                        <CardContent>
+                                          <div>
+                                            {section.inputField.map(
+                                              (inputValue, inputIndex) => (
+                                                <>
+                                                  <Card
+                                                    className="input-container-mobile"
+                                                    style={{
+                                                      marginBottom: "10px",
+                                                      background: "white",
+                                                    }}
+                                                    key={inputIndex}
+                                                  >
+                                                    <CardContent>
+                                                      <TextField
+                                                        style={{
+                                                          background: "#fff",
+
+                                                          // background: "aliceblue",
+                                                        }}
+                                                        fullWidth
+                                                        id="fullWidth"
+                                                        // style={{ width: "80%" }}
+                                                        value={inputValue.value}
+                                                        type="text"
+                                                        placeholder="Enter"
+                                                        onChange={(e) =>
+                                                          handleInputValue(
+                                                            pageIndex,
+                                                            sectionIndex,
+                                                            inputIndex,
+                                                            e
+                                                          )
+                                                        }
+                                                      />
+                                                    </CardContent>
+                                                  </Card>
+                                                  {/* </div> */}
+                                                </>
+                                              )
+                                            )}
+                                          </div>
+                                        </CardContent>
+                                        {/* </Card> */}
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              </CardContent>
+                              <Menu
+                                id="page-menu"
+                                anchorEl={anchorElPage}
+                                keepMounted
+                                open={
+                                  Boolean(anchorElPage) &&
+                                  currentPageIndex === pageIndex
+                                }
+                                onClose={handleClosePage}
+                              >
+                                <MenuItem onClick={handleAddPage}>
+                                  Add Page
+                                </MenuItem>
+                                <MenuItem
+                                  onClick={() => handleRemovePage(pageIndex)}
+                                >
+                                  Delete Page
+                                </MenuItem>
+                              </Menu>
+                            </Card>
                           ))}
+                        </Container>
+                        <div>
+                          <Button
+                            sx={{
+                              background: "white",
+                              marginTop: "10px",
+                              left: "11px",
+                              fontSize: "12px",
+                            }}
+                            onClick={handlePreviousPage}
+                            disabled={currentPage <= 1}
+                          >
+                            Prev
+                          </Button>
+                          <Button
+                            sx={{
+                              background: "white",
+                              marginTop: "10px",
+                              left: "30px",
+                              fontSize: "12px",
+                            }}
+                          >
+                            Save
+                          </Button>
+
+                          <Button
+                            sx={{
+                              background: "white",
+                              marginTop: "10px",
+                              left: "51px",
+                              fontSize: "12px",
+                            }}
+                            onClick={handleNextPage}
+                            disabled={currentPage >= totalPages}
+                          >
+                            Next
+                          </Button>
                         </div>
-                      </CardContent>
-                      <Menu
-                        id="page-menu"
-                        anchorEl={anchorElPage}
-                        keepMounted
-                        open={
-                          Boolean(anchorElPage) &&
-                          currentPageIndex === pageIndex
-                        }
-                        onClose={handleClosePage}
-                      >
-                        <MenuItem onClick={handleAddPage}>Add Page</MenuItem>
-                        <MenuItem onClick={() => handleRemovePage(pageIndex)}>
-                          Delete Page
-                        </MenuItem>
-                      </Menu>
-                    </Card>
-                  ))}
-                </Container>
-                <div>
-                  <Button
-                    sx={{
-                      background: "white",
-                      marginTop: "10px",
-                      left: "154px",
-                    }}
-                  >
-                    Save
-                  </Button>
+                      </>
+                    ) : (
+                      <Container>
+                        <Card
+                          sx={{
+                            width: "100%",
+                            borderRadius: "10px",
+                            marginBottom: "20px",
+                            background: "ghostwhite",
+                            height: "fit-content",
+                            minHeight: "439px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              height: "100px",
+                              marginTop: "46%",
+                              marginLeft: "25%",
+                              paddingRight: "17px",
+                              paddingLeft: "20px",
+                              paddingTop: "0px",
+                              color: "#00c8ff",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              borderRadius: "10px",
+                              cursor: "pointer",
+                              width: "61%",
+                            }}
+                          >
+                            <NoteAddOutlinedIcon
+                              fontSize="large"
+                              sx={{
+                                marginTop: "12%",
+                                marginLeft: "9%",
+                                height: "34px", // Set the height of the background to 200px
+                                width: "auto", // Adjust width as needed
+                              }}
+                            />
+                            <div style={{ color: "black", fontSize: "10px" }}>
+                              To Add the Question ,add a Page first
+                            </div>
+                            <Button
+                              sx={{
+                                background: "white",
+                                left: "-11px",
+                                fontSize: "10px",
+                              }}
+                              onClick={() => handleAddPage()}
+                            >
+                              <NoteAddOutlinedIcon
+                                fontSize="large"
+                                sx={{
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  height: "20px", // Set the height of the background to 200px
+                                  width: "auto", // Adjust width as needed
+                                }}
+                              />
+                              Add Page
+                            </Button>
+                          </div>
+                        </Card>
+                      </Container>
+                    )}
+                  </div>
                 </div>
-              </>
-            ) : (
-              <Container>
-                <Card
-                  sx={{
-                    width: "100%",
-                    borderRadius: "10px",
-                    marginBottom: "20px",
-                    background: "ghostwhite",
-                    height: "fit-content",
-                    minHeight: "510px",
-                  }}
-                ></Card>
-              </Container>
-            )}
-          </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
