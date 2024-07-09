@@ -202,3 +202,10 @@ input:focus {
   animation-duration: 10ms;
   /* padding: 16.5px 14px; */
 }
+.noteAddOutlinedIconCls {
+  align-items: center;
+  padding-right: 10px;
+  justify-content: center;
+  height: 30px;
+  width: auto;
+}

@@ -7,6 +7,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Switch,
   TextField,
   Tooltip,
   Typography,
@@ -46,13 +47,7 @@ const Container = styled.div`
 `;
 
 function Forms() {
-  // const [anchorElPage, setAnchorElPage] = useState(null);
-  // const [anchorElSection, setAnchorElSection] = useState(null);
-  // const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  // const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const [time, setItme] = useState(new Date().toLocaleTimeString());
-
   const [anchorElPage, setAnchorElPage] = useState<HTMLElement | null>(null);
   const [anchorElSection, setAnchorElSection] = useState<HTMLElement | null>(
     null
@@ -63,7 +58,6 @@ function Forms() {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 1;
-
   const [pages, setPages] = useState([
     {
       visible: true,
@@ -81,9 +75,11 @@ function Forms() {
     },
   ]);
 
-  const [visibleSections, setVisibleSections] = useState(
-    pages.map((page) => page.sections.map(() => true))
-  );
+  const [focusedInput, setFocusedInput] = useState({
+    pageIndex: null,
+    sectionIndex: null,
+    inputIndex: null,
+  });
 
   const focusInputField = (
     pageIndex: number,
@@ -101,6 +97,12 @@ function Forms() {
   const currentPages = pages.slice(indexOfFirstPage, indexOfLastPage);
 
   const totalPages = Math.ceil(pages.length / itemsPerPage);
+  const label = {
+    inputProps: { "aria-label": "Switch demo" },
+    style: {
+      float: "right",
+    },
+  };
 
   const handleNextPage = () => {
     setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
@@ -260,6 +262,8 @@ function Forms() {
     handleCloseSection();
   };
 
+  const handleSwitch = (e) => console.log(e.target.checked);
+
   const handleRemoveSection = (pageIndex, sectionIndex) => {
     const newPages = pages.map((page, i) => {
       if (i === pageIndex) {
@@ -348,6 +352,13 @@ function Forms() {
     });
     setPages(newPages);
   };
+  const handleFocus = (pageIndex, sectionIndex, inputIndex) => {
+    setFocusedInput({ pageIndex, sectionIndex, inputIndex });
+  };
+
+  const handleBlur = () => {
+    setFocusedInput({ pageIndex: null, sectionIndex: null, inputIndex: null });
+  };
   return (
     <>
       {/* Desktop View */}
@@ -377,13 +388,7 @@ function Forms() {
         >
           <NoteAddOutlinedIcon
             fontSize="large"
-            sx={{
-              alignItems: "center",
-              paddingRight: "10px",
-              justifyContent: "center",
-              height: "30px", // Set the height of the background to 200px
-              width: "auto", // Adjust width as needed
-            }}
+            className="noteAddOutlinedIconCls"
           />
         </div>
 
@@ -394,6 +399,20 @@ function Forms() {
           <p style={{ padding: "0px", marginTop: "0", marginBottom: "0" }}>
             SubTitle
           </p>
+        </div>
+        <div
+          style={{
+            width: "75%",
+            display: "flex",
+            justifyContent: "end",
+            margin: "20px",
+          }}
+        >
+          <Switch
+            style={{ float: "right" }}
+            onChange={(e) => handleSwitch(e)}
+          />
+          <span style={{ marginTop: "5px" }}>Collapse All Sections</span>
         </div>
       </div>
       <div
@@ -609,106 +628,188 @@ function Forms() {
                                     marginTop: "-14px",
                                   }}
                                 >
-                                  <div style={{ padding: "0px" }}>
+                                  <div
+                                    style={{
+                                      padding: "0px",
+                                      marginTop: "10px",
+                                    }}
+                                  >
                                     {section.inputField.map(
                                       (inputValue, inputIndex) => (
                                         <>
-                                          <div
-                                            className="input-container"
-                                            style={
-                                              {
+                                          <div style={{ display: "flex" }}>
+                                            <div
+                                              style={{
+                                                width: "4%",
+                                                marginTop: "-11px",
+                                              }}
+                                            >
+                                              {focusedInput.pageIndex ===
+                                                pageIndex &&
+                                                focusedInput.sectionIndex ===
+                                                  sectionIndex &&
+                                                focusedInput.inputIndex ===
+                                                  inputIndex && (
+                                                  <Card
+                                                    style={{ display: "block" }}
+                                                  >
+                                                    <Tooltip title="Add Question">
+                                                      <div>
+                                                        <IconButton
+                                                          onMouseDown={(e) =>
+                                                            e.preventDefault()
+                                                          }
+                                                          style={{
+                                                            left: "5px",
+                                                            marginBottom:
+                                                              "-11px",
+                                                          }}
+                                                          aria-label="Question"
+                                                          onClick={() =>
+                                                            handleAddInput(
+                                                              pageIndex,
+                                                              sectionIndex
+                                                            )
+                                                          }
+                                                        >
+                                                          <ControlPointOutlinedIcon
+                                                            sx={{
+                                                              color: blue[500],
+                                                            }}
+                                                          />
+                                                        </IconButton>
+                                                      </div>
+                                                    </Tooltip>
+                                                    <Tooltip title="Delete">
+                                                      <div>
+                                                        <IconButton
+                                                          onMouseDown={(e) =>
+                                                            e.preventDefault()
+                                                          }
+                                                          aria-label="Delete"
+                                                          style={{
+                                                            margin: "3px",
+                                                          }}
+                                                          onClick={() =>
+                                                            handleRemoveQuestion(
+                                                              pageIndex,
+                                                              sectionIndex,
+                                                              inputIndex
+                                                            )
+                                                          }
+                                                        >
+                                                          <DeleteForeverIcon
+                                                            sx={{
+                                                              color: pink[500],
+                                                            }}
+                                                          />
+                                                        </IconButton>
+                                                      </div>
+                                                    </Tooltip>
+                                                  </Card>
+                                                )}
+                                            </div>
+                                            <div
+                                              className="input-container"
+                                              style={{
+                                                width: "96%",
                                                 // marginBottom: "-33px",
                                                 // border: "2px solid #0d6efd",
-                                              }
-                                            }
-                                            key={inputIndex}
-                                          >
-                                            <AppsIcon
-                                              sx={{
-                                                height: "40px",
-                                                margin: "6px",
-                                                color: "#ccc",
                                               }}
-                                            />
+                                              // onFocus={() =>
+                                              //   setFocusedInputIndex(inputIndex)
+                                              // }
+                                              // onBlur={() =>
+                                              //   setFocusedInputIndex(null)
+                                              // }
+                                              key={inputIndex}
+                                            >
+                                              <AppsIcon
+                                                sx={{
+                                                  height: "40px",
+                                                  margin: "6px",
+                                                  color: "#ccc",
+                                                }}
+                                              />
 
-                                            <TextField
-                                              fullWidth
-                                              id="fullWidth"
-                                              variant="filled"
-                                              style={{
-                                                width: "100%",
-                                                padding: "10px",
-                                              }}
-                                              sx={{
-                                                "& .MuiFilledInput-root": {
-                                                  backgroundColor: "white", // Ensure the background is white
-                                                  "&:before": {
-                                                    borderBottom: "none", // Remove the bottom border before focus
-                                                  },
-                                                  "&:after": {
-                                                    borderBottom: "none", // Remove the bottom border after focus
-                                                  },
-                                                  "&:hover:not(.Mui-disabled):before":
-                                                    {
-                                                      borderBottom: "none", // Remove the bottom border on hover
+                                              <TextField
+                                                fullWidth
+                                                id="fullWidth"
+                                                variant="filled"
+                                                style={{
+                                                  width: "100%",
+                                                  padding: "10px",
+                                                }}
+                                                sx={{
+                                                  "& .MuiFilledInput-root": {
+                                                    backgroundColor: "white", // Ensure the background is white
+                                                    "&:before": {
+                                                      borderBottom: "none", // Remove the bottom border before focus
                                                     },
-                                                },
-                                              }}
-                                              value={inputValue.value}
-                                              inputRef={inputValue.ref}
-                                              type="text"
-                                              placeholder="Enter the question"
-                                              onChange={(e) =>
-                                                handleInputValue(
-                                                  pageIndex,
-                                                  sectionIndex,
-                                                  inputIndex,
-                                                  e
-                                                )
-                                              }
-                                              onFocus={() =>
-                                                setFocusedInputIndex(inputIndex)
-                                              }
-                                              onBlur={() =>
-                                                setFocusedInputIndex(null)
-                                              }
-                                            />
-                                            <>
-                                              <CardActions disableSpacing>
-                                                <Tooltip title="Delete">
-                                                  <IconButton
-                                                    aria-label="Delete"
-                                                    style={{ margin: "6px" }}
-                                                    onClick={() =>
-                                                      handleRemoveQuestion(
-                                                        pageIndex,
-                                                        sectionIndex,
-                                                        inputIndex
-                                                      )
-                                                    }
-                                                  >
-                                                    <DeleteForeverIcon
-                                                      sx={{ color: pink[500] }}
-                                                    />
-                                                  </IconButton>
-                                                </Tooltip>
-                                                <Tooltip title="Add Question">
-                                                  <IconButton
-                                                    aria-label="Question"
-                                                    onClick={() =>
-                                                      handleAddInput(
-                                                        pageIndex,
-                                                        sectionIndex
-                                                      )
-                                                    }
-                                                  >
-                                                    <ControlPointOutlinedIcon
-                                                      sx={{ color: blue[500] }}
-                                                    />
-                                                  </IconButton>
-                                                </Tooltip>
-                                              </CardActions>
-                                            </>
+                                                    "&:after": {
+                                                      borderBottom: "none", // Remove the bottom border after focus
+                                                    },
+                                                    "&:hover:not(.Mui-disabled):before":
+                                                      {
+                                                        borderBottom: "none", // Remove the bottom border on hover
+                                                      },
+                                                  },
+                                                }}
+                                                value={inputValue.value}
+                                                inputRef={inputValue.ref}
+                                                type="text"
+                                                placeholder="Enter the question"
+                                                onBlur={handleBlur}
+                                                onFocus={() =>
+                                                  handleFocus(
+                                                    pageIndex,
+                                                    sectionIndex,
+                                                    inputIndex
+                                                  )
+                                                }
+                                                onChange={(e) =>
+                                                  handleInputValue(
+                                                    pageIndex,
+                                                    sectionIndex,
+                                                    inputIndex,
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                              <>
+                                                <CardActions disableSpacing>
+                                                  <Tooltip title="Delete">
+                                                    <IconButton
+                                                      onMouseDown={(e) =>
+                                                        e.preventDefault()
+                                                      }
+                                                      // aria-label="Delete"
+                                                      style={{
+                                                        marginRight: "250px",
+
+                                                        fontSize: "15px",
+                                                        fontWeight: "bold",
+                                                        color: "black",
+                                                      }}
+                                                      onClick={() =>
+                                                        console.log("type")
+                                                      }
+                                                    >
+                                                      <TitleIcon
+                                                        sx={{
+                                                          background:
+                                                            "#ff000036",
+                                                          color: "#00000082",
+                                                          fontSize: "18px",
+                                                          margin: "8px",
+                                                        }}
+                                                      />
+                                                      Text Answer
+                                                    </IconButton>
+                                                  </Tooltip>
+                                                </CardActions>
+                                              </>
+                                            </div>
                                           </div>
                                           {/* <hr style={{ margin: "0px" }} /> */}
                                         </>
@@ -831,7 +932,7 @@ function Forms() {
                 }}
               />
               <div style={{ color: "black" }}>
-                To Add the Question ,add a Page first
+                To Add the Questions,add a Page first
               </div>
               <Button
                 sx={{ background: "white", left: "70px" }}
@@ -1427,7 +1528,7 @@ function Forms() {
                               }}
                             />
                             <div style={{ color: "black", fontSize: "10px" }}>
-                              To Add the Question ,add a Page first
+                              To Add the Questions,add a Page first
                             </div>
                             <Button
                               sx={{
