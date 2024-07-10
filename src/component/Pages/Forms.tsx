@@ -137,11 +137,11 @@ function Forms() {
         index === pageIndex
           ? {
               ...page,
-              sections: page.sections.map((section, index) =>
-                index === sectionIndex
-                  ? { ...section, sectionVisible: !section.sectionVisible }
-                  : section
-              ),
+              visible: !page.visible,
+              // sections: page.sections.map((section) => ({
+              //   ...section,
+              //   sectionVisible: page.visible,
+              // })),
             }
           : page
       )
@@ -174,36 +174,6 @@ function Forms() {
     setAnchorElPage(null);
     setCurrentPageIndex(null);
   };
-
-  // const handleAddPage = () => {
-  //   // setPages([
-  //   //   ...pages,
-  //   //   {
-  //   //     visible: true,
-  //   //     sections: [{ sectionVisible: true, inputField: [{ value: "" }] }],
-  //   //   },
-  //   // ]);
-  //   // handleClosePage();
-  //   const newPage = {
-  //     visible: true,
-  //     sections: [
-  //       {
-  //         sectionVisible: true,
-  //         inputField: [{ value: "", ref: React.createRef() }],
-  //       },
-  //     ],
-  //   };
-
-  //   setPages((prevPages) => {
-  //     const updatedPages = [...prevPages, newPage];
-  //     // Use setTimeout to ensure the state update completes before focusing the input
-  //     setTimeout(() => {
-  //       newPage?.sections[0]?.inputField[0]?.ref?.current?.focus();
-  //     }, 0);
-
-  //     return updatedPages;
-  //   });
-  // };
 
   const handleAddPage = () => {
     const newInputField = {
@@ -262,7 +232,19 @@ function Forms() {
     handleCloseSection();
   };
 
-  const handleSwitch = (e) => console.log(e.target.checked);
+  // const handleSwitch = (e) => console.log(e.target.checked);
+  const handleSwitch = (e) => {
+    setPages((prevPages) =>
+      prevPages.map((page) => ({
+        ...page,
+        visible: e.target.checked,
+        sections: page.sections.map((section) => ({
+          ...section,
+          sectionVisible: e.target.checked,
+        })),
+      }))
+    );
+  };
 
   const handleRemoveSection = (pageIndex, sectionIndex) => {
     const newPages = pages.map((page, i) => {
@@ -362,30 +344,8 @@ function Forms() {
   return (
     <>
       {/* Desktop View */}
-      <div
-        style={{
-          background: "ghostwhite",
-          display: "flex",
-          marginBottom: "-50px",
-        }}
-      >
-        <div
-          style={{
-            marginTop: "20px",
-            marginLeft: "20px",
-            background: "#d7faf7",
-            paddingRight: "10px",
-            paddingLeft: "10px",
-            paddingTop: "0px",
-            color: "#00c8ff",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderRadius: "10px",
-            width: "50px",
-            height: "50px",
-          }}
-        >
+      <div className="heading-css">
+        <div className="heading2-css">
           <NoteAddOutlinedIcon
             fontSize="large"
             className="noteAddOutlinedIconCls"
@@ -400,14 +360,7 @@ function Forms() {
             SubTitle
           </p>
         </div>
-        <div
-          style={{
-            width: "75%",
-            display: "flex",
-            justifyContent: "end",
-            margin: "20px",
-          }}
-        >
+        <div className="collpase">
           <Switch
             style={{ float: "right" }}
             onChange={(e) => handleSwitch(e)}
@@ -415,51 +368,14 @@ function Forms() {
           <span style={{ marginTop: "5px" }}>Collapse All Sections</span>
         </div>
       </div>
-      <div
-        style={{
-          // background: "#e8f0fe",
-          background: "ghostwhite",
-
-          display: "flex",
-          padding: "50px 60px 60px 60px",
-          height: "860px",
-          paddingLeft: "18px",
-        }}
-      >
+      <div className="box-css">
         {pages.length > 0 ? (
-          <div
-            style={{
-              width: "83%",
-              display: "ruby-text",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingTop: "8px",
-              minWidth: "100px",
-              height: "700px",
-              overflowY: "auto",
-              marginRight: "30px",
-            }}
-          >
+          <div className="inner-box">
             {pages.map((page, pageIndex) => (
               <>
-                <Card
-                  sx={{
-                    width: "98%",
-                    borderRadius: "10px",
-                    marginBottom: "20px",
-                    // background: "#f4f4f400",
-                    background: "rgba(158, 158, 158, 0.23)",
-                    border: "1px ridge",
-                  }}
-                  key={pageIndex}
-                >
+                <Card className="d-card" key={pageIndex}>
                   <CardHeader
-                    style={{
-                      background: "white",
-                      color: "block",
-                      padding: "7px",
-                      height: "48px",
-                    }}
+                    className="d-card-header"
                     action={
                       <>
                         <IconButton aria-label="settings">
@@ -713,15 +629,7 @@ function Forms() {
                                               className="input-container"
                                               style={{
                                                 width: "96%",
-                                                // marginBottom: "-33px",
-                                                // border: "2px solid #0d6efd",
                                               }}
-                                              // onFocus={() =>
-                                              //   setFocusedInputIndex(inputIndex)
-                                              // }
-                                              // onBlur={() =>
-                                              //   setFocusedInputIndex(null)
-                                              // }
                                               key={inputIndex}
                                             >
                                               <AppsIcon
@@ -1105,57 +1013,58 @@ function Forms() {
                                     height: "8px",
                                   }}
                                 ></div> */}
-                                    <CardContent>
-                                      <div>
-                                        {section.inputField.map(
-                                          (inputValue, inputIndex) => (
-                                            <>
-                                              <Card
-                                                className="input-container-mobile"
-                                                style={{
-                                                  marginBottom: "10px",
-                                                  background: "white",
-                                                }}
-                                                key={inputIndex}
-                                              >
-                                                {/* <Card
+                                    {section.sectionVisible && (
+                                      <CardContent>
+                                        <div>
+                                          {section.inputField.map(
+                                            (inputValue, inputIndex) => (
+                                              <>
+                                                <Card
+                                                  className="input-container-mobile"
+                                                  style={{
+                                                    marginBottom: "10px",
+                                                    background: "white",
+                                                  }}
+                                                  key={inputIndex}
+                                                >
+                                                  {/* <Card
                                               style={{
                                                 background: "blue",
                                                 padding: "20x",
                                                 borderBottom: "2px solid green",
                                               }}
                                             > */}
-                                                <CardContent>
-                                                  <TextField
-                                                    style={{
-                                                      background: "#fff",
+                                                  <CardContent>
+                                                    <TextField
+                                                      style={{
+                                                        background: "#fff",
 
-                                                      // background: "aliceblue",
-                                                    }}
-                                                    fullWidth
-                                                    id="fullWidth"
-                                                    // style={{ width: "80%" }}
-                                                    value={inputValue.value}
-                                                    type="text"
-                                                    placeholder="Enter"
-                                                    onChange={(e) =>
-                                                      handleInputValue(
-                                                        pageIndex,
-                                                        sectionIndex,
-                                                        inputIndex,
-                                                        e
-                                                      )
-                                                    }
-                                                  />
-                                                </CardContent>
-                                              </Card>
-                                              {/* </div> */}
-                                            </>
-                                          )
-                                        )}
-                                      </div>
-                                    </CardContent>
-                                    {/* </Card> */}
+                                                        // background: "aliceblue",
+                                                      }}
+                                                      fullWidth
+                                                      id="fullWidth"
+                                                      // style={{ width: "80%" }}
+                                                      value={inputValue.value}
+                                                      type="text"
+                                                      placeholder="Enter"
+                                                      onChange={(e) =>
+                                                        handleInputValue(
+                                                          pageIndex,
+                                                          sectionIndex,
+                                                          inputIndex,
+                                                          e
+                                                        )
+                                                      }
+                                                    />
+                                                  </CardContent>
+                                                </Card>
+                                                {/* </div> */}
+                                              </>
+                                            )
+                                          )}
+                                        </div>
+                                      </CardContent>
+                                    )}
                                   </div>
                                 ))}
                               </div>
@@ -1184,35 +1093,16 @@ function Forms() {
                       </Container>
                       <div>
                         <Button
-                          sx={{
-                            background: "white",
-                            marginTop: "10px",
-                            left: "11px",
-                            fontSize: "12px",
-                          }}
+                          className="prev-btn"
                           onClick={handlePreviousPage}
                           disabled={currentPage <= 1}
                         >
                           Prev
                         </Button>
-                        <Button
-                          sx={{
-                            background: "white",
-                            marginTop: "10px",
-                            left: "30px",
-                            fontSize: "12px",
-                          }}
-                        >
-                          Save
-                        </Button>
+                        <Button className="save-btn">Save</Button>
 
                         <Button
-                          sx={{
-                            background: "white",
-                            marginTop: "10px",
-                            left: "51px",
-                            fontSize: "12px",
-                          }}
+                          className="next-btn"
                           onClick={handleNextPage}
                           disabled={currentPage >= totalPages}
                         >
@@ -1222,16 +1112,7 @@ function Forms() {
                     </>
                   ) : (
                     <Container>
-                      <Card
-                        sx={{
-                          width: "100%",
-                          borderRadius: "10px",
-                          marginBottom: "20px",
-                          background: "ghostwhite",
-                          height: "fit-content",
-                          minHeight: "510px",
-                        }}
-                      ></Card>
+                      <Card className="m-card-bottom"></Card>
                     </Container>
                   )}
                 </div>
@@ -1452,43 +1333,7 @@ function Forms() {
                             </Card>
                           ))}
                         </Container>
-                        <div>
-                          <Button
-                            sx={{
-                              background: "white",
-                              marginTop: "10px",
-                              left: "11px",
-                              fontSize: "12px",
-                            }}
-                            onClick={handlePreviousPage}
-                            disabled={currentPage <= 1}
-                          >
-                            Prev
-                          </Button>
-                          <Button
-                            sx={{
-                              background: "white",
-                              marginTop: "10px",
-                              left: "30px",
-                              fontSize: "12px",
-                            }}
-                          >
-                            Save
-                          </Button>
-
-                          <Button
-                            sx={{
-                              background: "white",
-                              marginTop: "10px",
-                              left: "51px",
-                              fontSize: "12px",
-                            }}
-                            onClick={handleNextPage}
-                            disabled={currentPage >= totalPages}
-                          >
-                            Next
-                          </Button>
-                        </div>
+                        
                       </>
                     ) : (
                       <Container>

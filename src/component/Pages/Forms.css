@@ -209,3 +209,93 @@ input:focus {
   height: 30px;
   width: auto;
 }
+
+/* DesktopView-css */
+.heading-css {
+  background: ghostwhite;
+  display: flex;
+  margin-bottom: -50px;
+}
+
+.heading2-css {
+  margin-top: 20px;
+  margin-left: 20px;
+  background: #d7faf7;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 0px;
+  color: #00c8ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.collpase {
+  width: 75%;
+  display: flex;
+  justify-content: end;
+  margin: 20px;
+}
+
+.box-css {
+  background: ghostwhite;
+  display: flex;
+  padding: 50px 60px 60px 60px;
+  height: 860px;
+  padding-left: 18px;
+}
+.inner-box {
+  width: 83%;
+  display: ruby-text;
+  justify-content: center;
+  align-items: center;
+  padding-top: 8px;
+  min-width: 100px;
+  height: 700px;
+  overflow-y: auto;
+  margin-right: 30px;
+}
+.d-card {
+  width: 98%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: rgba(158, 158, 158, 0.23);
+  border: 1px ridge;
+}
+.d-card-header {
+  background: white;
+  color: block;
+  padding: 7px;
+  height: 48px;
+}
+
+/* Mobile-css */
+.prev-btn {
+  background: white;
+  margin-top: 10px;
+  left: 11px;
+  font-size: 12px;
+}
+.save-btn {
+  background: white;
+  margin-top: 10px;
+  left: 30px;
+  font-size: 12px;
+}
+.next-btn {
+  background: white;
+  margin-top: 10px;
+  left: 51px;
+  font-size: 12px;
+}
+.m-card-bottom {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: ghostwhite;
+  height: fit-content;
+  min-height: 510px;
+}
