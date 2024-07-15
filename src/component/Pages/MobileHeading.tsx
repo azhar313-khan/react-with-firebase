@@ -3,6 +3,7 @@ import WifiIcon from "@mui/icons-material/Wifi";
 import Battery60OutlinedIcon from "@mui/icons-material/Battery60Outlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import "./Forms.css";
 
 function MobileHeading({ time }) {
   return (

@@ -1,27 +1,6 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  IconButton,
-  Menu,
-  MenuItem,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import ControlPointOutlinedIcon from "@mui/icons-material/ControlPointOutlined";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { pink, blue } from "@mui/material/colors";
+import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 import styled from "styled-components";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
-import PostAddIcon from "@mui/icons-material/PostAdd";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import TitleIcon from "@mui/icons-material/Title";
 import AppsIcon from "@mui/icons-material/Apps";
 import { useEffect, useRef, useState } from "react";
 import "./Forms.css";
@@ -30,28 +9,21 @@ import AddPageCard from "./AddPageCard";
 import TextInput from "./TextInput";
 import CollpaseBtn from "./CollpaseBtn";
 import MobileHeading from "./MobileHeading";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faImage,
-  faCalendar,
-  faTag,
-  faEllipsis,
-} from "@fortawesome/free-solid-svg-icons"; // Adjust the imports according to your needs
 import Picklist from "./Picklist";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import MobileBtn from "./MobileBtn";
+import MobileInputWithIcon from "./MobileInputWithIcon";
+import NoPageAddPage from "./NoPageAddPage";
+import AddPageButton from "./AddPageButton";
+import PageHeading from "./PageHeading";
+import SectionHeading from "./SectionHeading";
+import SectionMenu from "./SectionMenu";
+import AddDeleteQuestiion from "./AddDeleteQuestiion";
+import QuestionAction from "./QuestionAction";
+import AddDeletePage from "./AddDeletePage";
+import AddSection from "./AddSection";
+import DraggenDrop from "./DraggenDrop";
 
-const Container = styled.div`
-  // height: 400px;
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // padding: 50px;
-
-  // @media (min-width: 368px) {
-  //   flex-direction: row;
-  //   justify-content: space-around;
-  // }
-`;
+const Container = styled.div``;
 
 function Forms() {
   const [time, setItme] = useState(new Date().toLocaleTimeString());
@@ -66,9 +38,7 @@ function Forms() {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const inputType = ["Text Type", "Number Type"];
-
   const [selectedValue, setSelectedValue] = React.useState(inputType[0]);
-
   const itemsPerPage = 1;
   const [pages, setPages] = useState([
     {
@@ -108,14 +78,7 @@ function Forms() {
   const indexOfLastPage = currentPage * itemsPerPage;
   const indexOfFirstPage = indexOfLastPage - itemsPerPage;
   const currentPages = pages.slice(indexOfFirstPage, indexOfLastPage);
-
   const totalPages = Math.ceil(pages.length / itemsPerPage);
-  const label = {
-    inputProps: { "aria-label": "Switch demo" },
-    style: {
-      float: "right",
-    },
-  };
 
   const handleNextPage = () => {
     setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
@@ -243,12 +206,12 @@ function Forms() {
     handleCloseSection();
   };
 
-  // const handleSwitch = (e) => console.log(e.target.checked);
   const handleSwitch = (e) => {
     setPages((prevPages) =>
       prevPages.map((page) => ({
         ...page,
-        visible: e.target.checked,
+
+        visible: !page?.visible,
         sections: page.sections.map((section) => ({
           ...section,
           sectionVisible: e.target.checked,
@@ -358,37 +321,27 @@ function Forms() {
     setSelectedValue(value);
   };
 
-  const updateInputType = (pageIndex, sectionIndex, inputIndex, newType) => {
-    const newPages = [...pages];
-    newPages[pageIndex].sections[sectionIndex].inputField[inputIndex].type =
-      newType;
-    setPages(newPages);
-  };
-
-  const handlePicklistClose = (value) => {
-    setOpenPicklist(false);
-    setSelectedValue(value);
-    const newType = value.split(" ")[0].toLowerCase(); // Convert "Text Type" to "text"
-    updateInputType(0, 0, 0, newType); // Update the type of the first input field for demonstration
-  };
-
   const handleBlur = () => {
     setFocusedInput({ pageIndex: null, sectionIndex: null, inputIndex: null });
   };
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const newPages = [...pages];
-    const [removed] = newPages[
-      result.source.droppableId
-    ].sections[0].inputField.splice(result.source.index, 1);
-    newPages[result.destination.droppableId].sections[0].inputField.splice(
-      result.destination.index,
+  const moveInput = (
+    fromPageIndex,
+    fromSectionIndex,
+    fromInputIndex,
+    toPageIndex,
+    toSectionIndex,
+    toInputIndex
+  ) => {
+    const updatedPages = [...pages];
+    const [movedItem] = updatedPages[fromPageIndex].sections[
+      fromSectionIndex
+    ].inputField.splice(fromInputIndex, 1);
+    updatedPages[toPageIndex].sections[toSectionIndex].inputField.splice(
+      toInputIndex,
       0,
-      removed
+      movedItem
     );
-
-    setPages(newPages);
+    setPages(updatedPages);
   };
 
   return (
@@ -398,529 +351,164 @@ function Forms() {
       <div className="box-css">
         {pages.length > 0 ? (
           <div className="inner-box">
-            <DragDropContext onDragEnd={onDragEnd}>
-              {pages.map((page, pageIndex) => (
-                <>
-                  <Card className="d-card" key={pageIndex}>
-                    <CardHeader
-                      className="d-card-header"
-                      action={
-                        <>
-                          <IconButton aria-label="settings">
-                            <MoreHorizIcon
-                              aria-controls="page-menu"
-                              aria-haspopup="true"
-                              onClick={(event) =>
-                                handleClickPage(event, pageIndex)
-                              }
-                              style={{ color: "block" }}
-                            />
-                          </IconButton>
-                        </>
-                      }
-                      title={
-                        <Typography
-                          variant="h6"
-                          style={{ fontSize: "12px", fontWeight: "bold" }}
-                        >
-                          {page.visible ? (
-                            <KeyboardArrowDownIcon
-                              style={{ cursor: "pointer" }}
-                              onClick={() => handleToggleVisibility(pageIndex)}
-                            />
-                          ) : (
-                            <KeyboardArrowRightIcon
-                              style={{ cursor: "pointer", margin: "10px" }}
-                              onClick={() => handleToggleVisibility(pageIndex)}
-                            />
-                          )}
+            {pages.map((page, pageIndex) => (
+              <>
+                <Card className="d-card" key={pageIndex}>
+                  <PageHeading
+                    handleClickPage={handleClickPage}
+                    handleToggleVisibility={handleToggleVisibility}
+                    pageIndex={pageIndex}
+                    page={page}
+                  />
 
-                          {`Page ${pageIndex + 1}`}
-                          <ModeEditOutlineOutlinedIcon
-                            style={{
-                              // margin: "10px",
-                              cursor: "pointer",
-                              marginTop: "0",
-                              margin: "-5px 11px 0px",
-                              fontSize: "16px",
-                            }}
-                          />
-                        </Typography>
-                      }
-                    />
-
-                    {page.visible && (
-                      <Droppable key={pageIndex} droppableId={`${pageIndex}`}>
-                        <CardContent>
+                  {page.visible && (
+                    <CardContent>
+                      <div style={{ margin: "0px 37px 0 94px" }}>
+                        {page.sections.map((section, sectionIndex) => (
                           <div
-                            style={{
-                              margin: "0px 37px 0 94px",
-                            }}
+                            style={{ marginBottom: "10px" }}
+                            key={sectionIndex}
                           >
-                            {page.sections.map((section, sectionIndex) => (
-                              <div
-                                style={{ marginBottom: "10px" }}
-                                key={sectionIndex}
-                              >
-                                <Card
-                                  sx={{
-                                    width: "100%",
-                                    borderRadius: "10px",
+                            <Card sx={{ width: "100%", borderRadius: "10px" }}>
+                              <SectionHeading
+                                section={section}
+                                handleClickSection={handleClickSection}
+                                handleToggleVisibilitySection={
+                                  handleToggleVisibilitySection
+                                }
+                                pageIndex={pageIndex}
+                                sectionIndex={sectionIndex}
+                              />
+                              <SectionMenu
+                                anchorElSection={anchorElSection}
+                                currentSectionIndex={currentSectionIndex}
+                                handleCloseSection={handleCloseSection}
+                                handleAddSection={handleAddSection}
+                                pageIndex={pageIndex}
+                                sectionIndex={sectionIndex}
+                                handleRemoveSection={handleRemoveSection}
+                              />
+                              {section.sectionVisible && (
+                                <CardContent
+                                  style={{
+                                    padding: "16px",
+                                    marginTop: "-14px",
                                   }}
                                 >
-                                  <CardHeader
+                                  <div
                                     style={{
-                                      background: "rgb(53, 45, 242)",
-                                      color: "#fff",
-                                      height: "50px",
+                                      padding: "0px",
+                                      marginTop: "10px",
                                     }}
-                                    action={
-                                      <IconButton aria-label="settings">
-                                        <p
-                                          style={{
-                                            background: "rgb(53, 45, 242)",
-                                            color: "#fff",
-                                            marginBottom: "0px",
-                                            marginRight: "5px",
-                                            fontSize: "15px",
-                                          }}
-                                        >
-                                          {section?.inputField?.length > 0
-                                            ? section?.inputField.length
-                                            : ""}
-                                        </p>
-                                        <MoreHorizIcon
-                                          aria-controls="section-menu"
-                                          aria-haspopup="true"
-                                          onClick={(event) =>
-                                            handleClickSection(
-                                              event,
-                                              sectionIndex
-                                            )
-                                          }
-                                          style={{ color: "white" }}
-                                        />
-                                      </IconButton>
-                                    }
-                                    title={
-                                      <Typography
-                                        variant="h6"
-                                        style={{
-                                          fontSize: "12px",
-                                          fontWeight: "bold",
-                                        }}
-                                      >
-                                        {section?.sectionVisible ? (
-                                          <KeyboardArrowDownIcon
-                                            sx={{
-                                              margin: "10px",
-                                              cursor: "pointer",
-                                            }}
-                                            onClick={() =>
-                                              handleToggleVisibilitySection(
-                                                pageIndex,
-                                                sectionIndex
-                                              )
-                                            }
-                                          />
-                                        ) : (
-                                          <KeyboardArrowRightIcon
-                                            sx={{
-                                              margin: "10px",
-                                              cursor: "pointer",
-                                            }}
-                                            onClick={() =>
-                                              handleToggleVisibilitySection(
-                                                pageIndex,
-                                                sectionIndex
-                                              )
-                                            }
-                                          />
-                                        )}
-                                        {`Section ${sectionIndex + 1}`}{" "}
-                                        <ModeEditOutlineOutlinedIcon
-                                          style={{
-                                            cursor: "pointer",
-                                            marginTop: "0",
-                                            margin: "-5px 11px 0px",
-                                            fontSize: "16px",
-                                          }}
-                                        />
-                                      </Typography>
-                                    }
-                                  />
-
-                                  <Menu
-                                    id="section-menu"
-                                    anchorEl={anchorElSection}
-                                    keepMounted
-                                    open={
-                                      Boolean(anchorElSection) &&
-                                      currentSectionIndex === sectionIndex
-                                    }
-                                    onClose={handleCloseSection}
                                   >
-                                    <MenuItem
-                                      onClick={() =>
-                                        handleAddSection(pageIndex)
-                                      }
-                                    >
-                                      Add Section{" "}
-                                    </MenuItem>
-                                    <MenuItem
-                                      onClick={() =>
-                                        handleRemoveSection(
-                                          pageIndex,
-                                          sectionIndex
-                                        )
-                                      }
-                                    >
-                                      Delete Section
-                                    </MenuItem>
-                                  </Menu>
-
-                                  {section.sectionVisible && (
-                                    <CardContent
-                                      style={{
-                                        padding: "16px",
-                                        marginTop: "-14px",
-                                      }}
-                                    >
-                                      <div
-                                        style={{
-                                          padding: "0px",
-                                          marginTop: "10px",
-                                        }}
-                                      >
-                                        {section.inputField.map(
-                                          (inputValue, inputIndex) => (
-                                            <>
-                                              <div style={{ display: "flex" }}>
-                                                <div
-                                                  style={
-                                                    {
-                                                      // width: "2%",
-                                                      // marginTop: "-11px",
+                                    {section.inputField.map(
+                                      (inputValue, inputIndex) => (
+                                        <>
+                                          <div style={{ display: "flex" }}>
+                                            <div>
+                                              {focusedInput.pageIndex ===
+                                                pageIndex &&
+                                                focusedInput.sectionIndex ===
+                                                  sectionIndex &&
+                                                focusedInput.inputIndex ===
+                                                  inputIndex && (
+                                                  <AddDeleteQuestiion
+                                                    handleAddInput={
+                                                      handleAddInput
                                                     }
-                                                  }
-                                                >
-                                                  {focusedInput.pageIndex ===
-                                                    pageIndex &&
-                                                    focusedInput.sectionIndex ===
-                                                      sectionIndex &&
-                                                    focusedInput.inputIndex ===
-                                                      inputIndex && (
-                                                      <Card
-                                                        style={{
-                                                          display: "block",
-                                                        }}
-                                                      >
-                                                        <Tooltip title="Add Question">
-                                                          <div>
-                                                            <IconButton
-                                                              onMouseDown={(
-                                                                e
-                                                              ) =>
-                                                                e.preventDefault()
-                                                              }
-                                                              style={{
-                                                                left: "5px",
-                                                                marginBottom:
-                                                                  "-11px",
-                                                              }}
-                                                              aria-label="Question"
-                                                              onClick={() =>
-                                                                handleAddInput(
-                                                                  pageIndex,
-                                                                  sectionIndex
-                                                                )
-                                                              }
-                                                            >
-                                                              <ControlPointOutlinedIcon
-                                                                sx={{
-                                                                  color:
-                                                                    blue[500],
-                                                                }}
-                                                              />
-                                                            </IconButton>
-                                                          </div>
-                                                        </Tooltip>
-                                                        <Tooltip title="Delete">
-                                                          <div>
-                                                            <IconButton
-                                                              onMouseDown={(
-                                                                e
-                                                              ) =>
-                                                                e.preventDefault()
-                                                              }
-                                                              aria-label="Delete"
-                                                              style={{
-                                                                margin: "3px",
-                                                              }}
-                                                              onClick={() =>
-                                                                handleRemoveQuestion(
-                                                                  pageIndex,
-                                                                  sectionIndex,
-                                                                  inputIndex
-                                                                )
-                                                              }
-                                                            >
-                                                              <DeleteForeverIcon
-                                                                sx={{
-                                                                  color:
-                                                                    pink[500],
-                                                                }}
-                                                              />
-                                                            </IconButton>
-                                                          </div>
-                                                        </Tooltip>
-                                                      </Card>
-                                                    )}
-                                                </div>
-                                                <div
-                                                  className="input-container"
-                                                  style={{
-                                                    width: "100%",
-                                                  }}
-                                                  key={inputIndex}
-                                                >
-                                                  <AppsIcon
-                                                    sx={{
-                                                      height: "40px",
-                                                      margin: "6px",
-                                                      color: "#ccc",
-                                                    }}
-                                                  />
-                                                  <TextInput
-                                                    handleFocus={handleFocus}
-                                                    handleInputValue={
-                                                      handleInputValue
+                                                    handleRemoveQuestion={
+                                                      handleRemoveQuestion
                                                     }
                                                     pageIndex={pageIndex}
                                                     sectionIndex={sectionIndex}
                                                     inputIndex={inputIndex}
-                                                    inputValue={inputValue}
-                                                    handleBlur={handleBlur}
-                                                    // inputType={selectedValue}
-                                                    inputType={inputValue.type}
                                                   />
-
-                                                  <>
-                                                    <CardActions disableSpacing>
-                                                      <Tooltip title="Delete">
-                                                        <span
-                                                          onMouseDown={(e) =>
-                                                            e.preventDefault()
-                                                          }
-                                                          style={{
-                                                            marginRight:
-                                                              "200px",
-                                                            fontSize: "15px",
-                                                            fontWeight: "bold",
-                                                            color: "black",
-                                                            width: "168px",
-                                                          }}
-                                                        >
-                                                          <span className="input-line">
-                                                            |
-                                                          </span>
-                                                          <span
-                                                            style={{
-                                                              fontSize: "17px",
-                                                              margin: "6px",
-                                                              background:
-                                                                "#ff000036",
-                                                              color:
-                                                                "#00000082",
-                                                              fontWeight:
-                                                                "bold",
-                                                              padding:
-                                                                "1px 4px 0px 4px",
-                                                            }}
-                                                          >
-                                                            {
-                                                              selectedValue.split(
-                                                                ""
-                                                              )[0]
-                                                            }
-                                                          </span>
-
-                                                          {selectedValue}
-                                                        </span>
-                                                      </Tooltip>
-                                                      <KeyboardArrowDownIcon
-                                                        onClick={
-                                                          handleClickOpen
-                                                        }
-                                                        style={{
-                                                          cursor: "pointer",
-                                                        }}
-                                                      />
-                                                    </CardActions>
-                                                  </>
-                                                </div>
-                                              </div>
-
-                                              <Picklist
-                                                selectedValue={selectedValue}
-                                                open={open}
-                                                onClose={handleClose}
+                                                )}
+                                            </div>
+                                            <div
+                                              className="input-container"
+                                              style={{
+                                                width: "100%",
+                                              }}
+                                              key={inputIndex}
+                                            >
+                                              <AppsIcon className="d-AppsIcon" />
+                                              {/* <TextInput
+                                                handleFocus={handleFocus}
+                                                handleInputValue={
+                                                  handleInputValue
+                                                }
+                                                pageIndex={pageIndex}
+                                                sectionIndex={sectionIndex}
+                                                inputIndex={inputIndex}
+                                                inputValue={inputValue}
+                                                handleBlur={handleBlur}
+                                                inputType={inputValue.type}
+                                              /> */}
+                                              <DraggenDrop
+                                                key={inputIndex}
+                                                inputValue={inputValue}
+                                                pageIndex={pageIndex}
+                                                sectionIndex={sectionIndex}
+                                                inputIndex={inputIndex}
+                                                moveInput={moveInput}
+                                                handleFocus={handleFocus}
+                                                handleInputValue={
+                                                  handleInputValue
+                                                }
+                                                handleBlur={handleBlur}
+                                                index={undefined}
                                               />
-                                            </>
-                                          )
-                                        )}
-                                      </div>
-                                    </CardContent>
-                                  )}
-                                </Card>
-                              </div>
-                            ))}
+                                              <QuestionAction
+                                                selectedValue={selectedValue}
+                                                handleClickOpen={
+                                                  handleClickOpen
+                                                }
+                                              />
+                                            </div>
+                                          </div>
+                                          <Picklist
+                                            selectedValue={selectedValue}
+                                            open={open}
+                                            onClose={handleClose}
+                                          />
+                                        </>
+                                      )
+                                    )}
+                                  </div>
+                                </CardContent>
+                              )}
+                            </Card>
                           </div>
-                          <div
-                            style={{
-                              color: "#00c8ff",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              borderRadius: "10px",
-                            }}
-                          >
-                            <Button
-                              sx={{ background: "white", left: "81px" }}
-                              onClick={() => handleAddSection(pageIndex)}
-                            >
-                              <PostAddIcon
-                                fontSize="large"
-                                sx={{
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  height: "15px",
-                                  width: "auto",
-                                }}
-                              />
-
-                              <Typography
-                                variant="h6"
-                                style={{ fontSize: "10px", color: "#212121" }}
-                              >
-                                Add Section
-                              </Typography>
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Droppable>
-                    )}
-                    <Menu
-                      id="page-menu"
-                      anchorEl={anchorElPage}
-                      keepMounted
-                      open={
-                        Boolean(anchorElPage) && currentPageIndex === pageIndex
-                      }
-                      onClose={handleClosePage}
-                    >
-                      <MenuItem onClick={handleAddPage}>Add Page</MenuItem>
-                      <MenuItem onClick={() => handleRemovePage(pageIndex)}>
-                        Delete Page
-                      </MenuItem>
-                    </Menu>
-                  </Card>
-
-                  <div
-                    style={{
-                      height: "100px",
-                      color: "#00c8ff",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      borderRadius: "10px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Button
-                      sx={{ background: "white", left: "10px" }}
-                      onClick={() => handleAddPage()}
-                    >
-                      <NoteAddOutlinedIcon
-                        fontSize="large"
-                        sx={{
-                          alignItems: "center",
-                          justifyContent: "center",
-                          height: "15px",
-                          width: "auto",
-                        }}
+                        ))}
+                      </div>
+                      <AddSection
+                        handleAddSection={handleAddSection}
+                        pageIndex={pageIndex}
                       />
-                      <Typography
-                        variant="h6"
-                        style={{ fontSize: "10px", color: "#212121" }}
-                      >
-                        Add Page
-                      </Typography>
-                    </Button>
-                  </div>
-                </>
-              ))}
-            </DragDropContext>
+                    </CardContent>
+                  )}
+                  <AddDeletePage
+                    anchorElPage={anchorElPage}
+                    currentPageIndex={currentPageIndex}
+                    pageIndex={pageIndex}
+                    handleClosePage={handleClosePage}
+                    handleAddPage={handleAddPage}
+                    handleRemovePage={handleRemovePage}
+                  />
+                </Card>
+                <AddPageButton handleAddPage={handleAddPage} />
+              </>
+            ))}
           </div>
         ) : (
-          <>
-            <div
-              style={{
-                height: "100px",
-                marginTop: "12%",
-                marginLeft: "25%",
-                paddingRight: "17px",
-                paddingLeft: "20px",
-                paddingTop: "0px",
-                color: "#00c8ff",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderRadius: "10px",
-                cursor: "pointer",
-                width: "61%",
-              }}
-            >
-              <NoteAddOutlinedIcon
-                fontSize="large"
-                sx={{
-                  marginTop: "12%",
-                  marginLeft: "9%",
-                  height: "85px", // Set the height of the background to 200px
-                  width: "auto", // Adjust width as needed
-                }}
-              />
-              <div style={{ color: "black" }}>
-                To Add the Questions,add a Page first
-              </div>
-              <Button
-                sx={{ background: "white", left: "70px" }}
-                onClick={() => handleAddPage()}
-              >
-                <NoteAddOutlinedIcon
-                  fontSize="large"
-                  sx={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "20px", // Set the height of the background to 200px
-                    width: "auto", // Adjust width as needed
-                  }}
-                />
-                Add Page
-              </Button>
-            </div>
-          </>
+          <NoPageAddPage handleAddPage={handleAddPage} />
         )}
         {/* Mobile View */}
         <div>
           {pages.length > 0 ? (
             <div>
-              <div
-                style={{
-                  width: "268px",
-                  height: "532px",
-                  /* background: red; */
-                  border: "11px solid rgb(158 158 158 / 23%)",
-                  borderRadius: "39px",
-                }}
-              >
+              <div className="m-div">
                 <div className="smartphone" style={{ width: "13.5%" }}>
                   <MobileHeading time={time} />
                   {pages.length > 0 ? (
@@ -928,42 +516,14 @@ function Forms() {
                       <Container className="card-container">
                         {currentPages.map((page, pageIndex) => (
                           <Card
-                            sx={{
-                              width: "100%",
-                              borderRadius: "10px",
-                              marginBottom: "20px",
-                              background: "aliceblue",
-                              height: "fit-content",
-                              minHeight: "350px",
-                            }}
+                            className="m-container-card"
                             key={indexOfFirstPage + pageIndex}
                           >
-                            <p
-                              style={{
-                                textAlign: "center",
-                                background: "#9e9e9e3d",
-                                height: "50px",
-                                marginBottom: "-37px",
-                                fontSize: "12px",
-                              }}
-                            >{`Page ${indexOfFirstPage + pageIndex + 1}`}</p>
-                            <hr
-                              style={{
-                                marginTop: -"28px",
-                                border: "2px solid rgb(132 158 158)",
-                                marginRight: "9px",
-                                marginLeft: "9px",
-                              }}
-                            />
-                            <CardHeader
-                              sx={{
-                                background: "rgb(158 158 158 / 4%)",
-                                color: "block",
-                                textAlign: "center",
-                                padding: "0px",
-                                borderBottom: "2px ridge",
-                              }}
-                            />
+                            <p className="m-p-heading ">
+                              {`Page ${indexOfFirstPage + pageIndex + 1}`}
+                            </p>
+                            <hr className="m-hr" />
+                            <CardHeader className="m-cardHeading" />
                             <CardContent style={{ height: "fit-content" }}>
                               <div style={{ margin: "-10px" }}>
                                 {page.sections.map((section, sectionIndex) => (
@@ -974,12 +534,7 @@ function Forms() {
                                     key={sectionIndex}
                                   >
                                     <CardHeader
-                                      style={{
-                                        background: "rgb(53, 45, 242)",
-                                        color: "#fff",
-                                        height: "40px",
-                                        borderRadius: "9px",
-                                      }}
+                                      className="m-cardHeader-title"
                                       title={
                                         <Typography
                                           variant="h6"
@@ -993,160 +548,21 @@ function Forms() {
                                         </Typography>
                                       }
                                     />
-                                    <Menu
-                                      id="section-menu"
-                                      anchorEl={anchorElSection}
-                                      keepMounted
-                                      open={
-                                        Boolean(anchorElSection) &&
-                                        currentSectionIndex === sectionIndex
-                                      }
-                                      onClose={handleCloseSection}
-                                    >
-                                      <MenuItem
-                                        onClick={() =>
-                                          handleAddSection(pageIndex)
-                                        }
-                                      >
-                                        Add Section
-                                      </MenuItem>
-                                      <MenuItem
-                                        onClick={() =>
-                                          handleRemoveSection(
-                                            pageIndex,
-                                            sectionIndex
-                                          )
-                                        }
-                                      >
-                                        Delete Section
-                                      </MenuItem>
-                                    </Menu>
 
                                     {section.sectionVisible && (
                                       <CardContent>
                                         <div>
                                           {section.inputField.map(
                                             (inputValue, inputIndex) => (
-                                              <>
-                                                <Card
-                                                  className="input-container-mobile"
-                                                  style={{
-                                                    marginBottom: "10px",
-                                                    background: "white",
-                                                  }}
-                                                  key={inputIndex}
-                                                >
-                                                  <CardContent>
-                                                    <h6
-                                                      style={{
-                                                        fontSize: "12px",
-                                                      }}
-                                                    >
-                                                      {inputValue.value.length
-                                                        ? inputValue.value
-                                                        : "Type Question"}
-                                                    </h6>
-                                                    <TextField
-                                                      style={{
-                                                        background: "#fff",
-                                                      }}
-                                                      fullWidth
-                                                      id="fullWidth"
-                                                      value={inputValue.value}
-                                                      type="text"
-                                                      placeholder="Enter"
-                                                      onChange={(e) =>
-                                                        handleInputValue(
-                                                          pageIndex,
-                                                          sectionIndex,
-                                                          inputIndex,
-                                                          e
-                                                        )
-                                                      }
-                                                    />
-
-                                                    <span
-                                                      style={{
-                                                        marginLeft: "3px",
-                                                        fontSize: "10px",
-                                                        display: "inline-grid",
-                                                        marginRight: "8px",
-                                                        marginTop: "10px",
-                                                      }}
-                                                    >
-                                                      <FontAwesomeIcon
-                                                        icon={faImage}
-                                                        style={{
-                                                          marginTop: "10px",
-                                                          height: "14px",
-                                                          marginLeft: "6px",
-                                                        }}
-                                                      />
-                                                      Photo
-                                                    </span>
-                                                    <span
-                                                      style={{
-                                                        marginLeft: "3px",
-                                                        fontSize: "10px",
-                                                        display: "inline-grid",
-                                                        marginRight: "8px",
-                                                        marginTop: "10px",
-                                                      }}
-                                                    >
-                                                      <FontAwesomeIcon
-                                                        icon={faCalendar}
-                                                        style={{
-                                                          marginTop: "10px",
-                                                          height: "14px",
-                                                          marginLeft: "6px",
-                                                        }}
-                                                      />
-                                                      Note
-                                                    </span>
-                                                    <span
-                                                      style={{
-                                                        marginLeft: "3px",
-                                                        fontSize: "10px",
-                                                        display: "inline-grid",
-                                                        marginRight: "8px",
-                                                        marginTop: "10px",
-                                                      }}
-                                                    >
-                                                      <FontAwesomeIcon
-                                                        icon={faTag}
-                                                        style={{
-                                                          marginTop: "10px",
-                                                          height: "14px",
-                                                          marginLeft: "6px",
-
-                                                          transform:
-                                                            "rotate(90deg)",
-                                                        }}
-                                                      />
-                                                      Action
-                                                    </span>
-                                                    <span
-                                                      style={{
-                                                        marginLeft: "5px",
-                                                        fontSize: "10px",
-                                                        display: "inline-grid",
-                                                        marginRight: "8px",
-                                                        marginTop: "10px",
-                                                      }}
-                                                    >
-                                                      <FontAwesomeIcon
-                                                        icon={faEllipsis}
-                                                        style={{
-                                                          marginTop: "10px",
-                                                          height: "14px",
-                                                          marginLeft: "6px",
-                                                        }}
-                                                      />
-                                                      More
-                                                    </span>
-                                                  </CardContent>
-                                                </Card>
-                                              </>
+                                              <MobileInputWithIcon
+                                                inputIndex={inputIndex}
+                                                inputValue={inputValue}
+                                                handleInputValue={
+                                                  handleInputValue
+                                                }
+                                                pageIndex={pageIndex}
+                                                sectionIndex={sectionIndex}
+                                              />
                                             )
                                           )}
                                         </div>
@@ -1156,46 +572,15 @@ function Forms() {
                                 ))}
                               </div>
                             </CardContent>
-                            <Menu
-                              id="page-menu"
-                              anchorEl={anchorElPage}
-                              keepMounted
-                              open={
-                                Boolean(anchorElPage) &&
-                                currentPageIndex === pageIndex
-                              }
-                              onClose={handleClosePage}
-                            >
-                              <MenuItem onClick={handleAddPage}>
-                                Add Page
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => handleRemovePage(pageIndex)}
-                              >
-                                Delete Page
-                              </MenuItem>
-                            </Menu>
                           </Card>
                         ))}
                       </Container>
-                      <div>
-                        <Button
-                          className="prev-btn"
-                          onClick={handlePreviousPage}
-                          disabled={currentPage <= 1}
-                        >
-                          Prev
-                        </Button>
-                        <Button className="save-btn">Save</Button>
-
-                        <Button
-                          className="next-btn"
-                          onClick={handleNextPage}
-                          disabled={currentPage >= totalPages}
-                        >
-                          Next
-                        </Button>
-                      </div>
+                      <MobileBtn
+                        handlePreviousPage={handlePreviousPage}
+                        handleNextPage={handleNextPage}
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                      />
                     </>
                   ) : (
                     <Container>
@@ -1207,25 +592,14 @@ function Forms() {
             </div>
           ) : (
             <div>
-              <div>
-                <div
-                  style={{
-                    width: "268px",
-                    height: "532px",
-                    border: "11px solid rgb(158 158 158 / 23%)",
-                    borderRadius: "39px",
-                  }}
-                >
-                  <div className="smartphone" style={{ width: "13.5%" }}>
-                    <MobileHeading time={time} />
-                    {pages.length > 0 ? (
-                      <>
-                        <Container className="card-container"></Container>
-                      </>
-                    ) : (
-                      <AddPageCard handleAddPage={handleAddPage} />
-                    )}
-                  </div>
+              <div className="m-clearIconCss">
+                <div className="smartphone" style={{ width: "13.5%" }}>
+                  <MobileHeading time={time} />
+                  {pages.length > 0 ? (
+                    <Container className="card-container"></Container>
+                  ) : (
+                    <AddPageCard handleAddPage={handleAddPage} />
+                  )}
                 </div>
               </div>
             </div>

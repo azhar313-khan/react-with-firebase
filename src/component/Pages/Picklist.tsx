@@ -4,17 +4,15 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemAvatar,
-  Avatar,
   ListItemText,
 } from "@mui/material";
-import TitleIcon from "@mui/icons-material/Title";
 
 export interface SimpleDialogProps {
   open: boolean;
   selectedValue: string;
   onClose: (value: string) => void;
 }
+import "./Forms.css";
 
 function Picklist(props: SimpleDialogProps) {
   const inputType = ["Text Type", "Number Type"];
