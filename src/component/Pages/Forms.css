@@ -1,0 +1,424 @@
+.smartphone {
+  position: absolute;
+  right: 71px;
+  /* top: 90px; */
+  width: 300px;
+  height: 506px;
+  margin: auto;
+  border: 2px #fff solid;
+  border-top-width: 76px;
+  border-bottom-width: 60px;
+  border-top-color: white;
+  border-bottom-color: white;
+  border-right-color: white;
+  border-radius: 27px;
+}
+
+/* The horizontal line on the top of the device */
+/* .smartphone:before {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 5px;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #00000030;
+  border-radius: 10px;
+} */
+
+/* The circle on the bottom of the device */
+/* .smartphone:after {
+  content: "";
+  display: block;
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  left: 50%;
+  bottom: -65px;
+  transform: translate(-50%, -50%);
+  background: #00000030;
+  border-radius: 50%;
+} */
+
+/* The screen (or content) of the device */
+.smartphone .content {
+  width: 360px;
+  height: 640px;
+  /* background: white; */
+}
+
+input {
+  border: 1px solid #ccc; /* Default border */
+  padding: 8px; /* Add some padding */
+}
+
+input:focus {
+  border: 2px solid #000; /* Border when focused */
+  outline: none; /* Remove default outline */
+}
+
+.smartphone {
+  width: 100%; /* Adjust as needed */
+}
+
+.lfGKfe {
+  height: 57px !important;
+}
+
+.card-container {
+  width: 100%;
+  max-height: 100%;
+  height: 400px !important;
+  overflow-y: auto; /* Enable vertical scrolling */
+  /* padding: 20px; */
+  box-sizing: border-box;
+  border: 20px #f4f4f400;
+  border-top: 30px white;
+  border-bottom: 30px white;
+  background-color: #f4f4f400;
+  margin-top: 7px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+}
+
+.smartphone-container {
+  background: white;
+  width: 24%;
+  height: 700px;
+  border-radius: 38px;
+  border: 12px #dee2e6 solid;
+  padding-bottom: 173px !important;
+  /* padding: 211px; */
+  /* background-color: #ff005a; */
+}
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiCard-root.css-nvw70t-MuiPaper-root-MuiCard-root {
+  width: 95%;
+}
+
+input:focus {
+  background: white;
+  border: none;
+  outline: none;
+}
+
+/* input:hover {
+  background: white;
+  border: 2px solid #0d6efd;
+  outline: none;
+} */
+
+.css-10botns-MuiInputBase-input-MuiFilledInput-input {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  /* padding: 4px 0 5px; */
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding-top: 0px;
+  /* padding-right: 12px; */
+  /* padding-bottom: 8px; */
+  /* padding-left: 12px; */
+}
+
+.input-container:hover {
+  border: 3px solid #0d6efd; /* Change the border to 2px solid red on hover */
+  /* background-color: lightblue; Change the background color on hover */
+}
+
+.css-hwkq3c-MuiInputBase-root-MuiFilledInput-root:hover {
+  background-color: white;
+}
+
+/* .input-container {
+  margin-bottom: 5px;
+  height: 50px;
+  width: 100%;
+  border-bottom: 2px solid #9e9e9e6b;
+
+  /* border: 1px solid red; */
+/* } */
+
+/* .input-container:hover {
+  border: 3px solid #0d6efd; /* Change the border to 3px solid blue on hover */
+/* background-color: lightblue; Change the background color on hover */
+/* } */
+/* .input-container:hover, */
+/* .input-container:focus-within { */
+/* border: 3px solid #0d6efd;
+} */
+.input-container {
+  margin-bottom: 5px;
+  height: 50px;
+  width: 100%;
+  border-bottom: 2px solid #9e9e9e6b;
+}
+
+.input-container:hover,
+.input-container:focus-within {
+  border: 3px solid #0d6efd;
+}
+
+.input-container-mobile {
+  margin-bottom: 5px;
+  height: fit-content;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 9px 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  /* padding: 16.5px 14px; */
+}
+.noteAddOutlinedIconCls {
+  align-items: center;
+  padding-right: 10px;
+  justify-content: center;
+  height: 30px;
+  width: auto;
+}
+
+/* DesktopView-css */
+.heading-css {
+  background: ghostwhite;
+  display: flex;
+  margin-bottom: -50px;
+}
+
+.heading2-css {
+  margin-top: 20px;
+  margin-left: 20px;
+  background: #d7faf7;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 0px;
+  color: #00c8ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.collpase {
+  width: 75%;
+  display: flex;
+  justify-content: end;
+  margin: 20px;
+}
+
+.box-css {
+  background: ghostwhite;
+  display: flex;
+  padding: 50px 60px 60px 60px;
+  height: 860px;
+  padding-left: 18px;
+}
+.inner-box {
+  width: 83%;
+  display: ruby-text;
+  justify-content: center;
+  align-items: center;
+  padding-top: 8px;
+  min-width: 100px;
+  height: 700px;
+  overflow-y: auto;
+  margin-right: 30px;
+}
+.d-card {
+  width: 98%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: rgba(158, 158, 158, 0.23);
+  border: 1px ridge;
+}
+.d-card-header {
+  background: white;
+  color: block;
+  padding: 7px;
+  height: 48px;
+}
+
+/* Mobile-css */
+.prev-btn {
+  background: white;
+  margin-top: 10px;
+  left: 11px;
+  font-size: 12px;
+}
+.save-btn {
+  background: white;
+  margin-top: 10px;
+  left: 30px;
+  font-size: 12px;
+}
+.next-btn {
+  background: white;
+  margin-top: 10px;
+  left: 51px;
+  font-size: 12px;
+}
+.m-card-bottom {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: ghostwhite;
+  height: fit-content;
+  min-height: 510px;
+}
+.m-clear-add {
+  width: 127%;
+  border-radius: 10px;
+  margin-left: -23px;
+  margin-bottom: 20px;
+  background: ghostwhite;
+  height: fit-content;
+  min-height: 439px;
+}
+.m-card-icon {
+  height: 100px;
+  margin-top: 46%;
+  margin-left: 25%;
+  padding-right: 17px;
+  padding-left: 20px;
+  padding-top: 0px;
+  color: #00c8ff;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 61%;
+}
+
+.input-line {
+  /* position: absolute; */
+  /* left: 52%;
+  top: 26%; */
+  color: #9e9e9e75;
+  margin-right: 25px;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  /* height: 30px; */
+}
+
+.m-clearIconCss {
+  width: 268px;
+  height: 532px;
+  border: 11px solid rgb(158 158 158 / 23%);
+  border-radius: 39px;
+}
+
+.m-p-heading {
+  text-align: center;
+  background: #9e9e9e3d;
+  height: 50px;
+  margin-bottom: -37px;
+  font-size: 12px;
+}
+
+.m-hr {
+  margin-top: -28px;
+  border: 2px solid rgb(132 158 158);
+  margin-right: 9px;
+  margin-left: 9px;
+}
+.m-cardHeading {
+  background: rgb(158 158 158 / 4%);
+  color: block;
+  text-align: center;
+  padding: 0px;
+  border-bottom: 2px ridge;
+}
+.m-container-card {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: aliceblue;
+  height: fit-content;
+  min-height: 350px;
+}
+.m-cardHeader-title {
+  background: rgb(53, 45, 242);
+  color: #fff;
+  height: 40px;
+  border-radius: 9px;
+}
+
+.m-div {
+  width: 268px;
+  height: 532px;
+  border: 11px solid rgb(158 158 158 / 23%);
+  border-radius: 39px;
+}
+.d-no-page-addPage {
+  height: 100px;
+  margin-top: 12%;
+  margin-left: 25%;
+  padding-right: 17px;
+  padding-left: 20px;
+  padding-top: 0px;
+  color: #00c8ff;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 61%;
+}
+
+.d-NoteAddOutlinedIcon-content {
+  margin-top: 12%;
+  margin-left: 9%;
+  height: 85px;
+  width: auto;
+}
+.d-NoteAddOutlinedIcon-addPage {
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: auto;
+}
+
+.d-PostAddIcon {
+  align-items: center;
+  justify-content: center;
+  height: 15px;
+  width: auto;
+}
+.d-AppsIcon {
+  height: 40px;
+  margin: 6px;
+  color: #ccc;
+}
